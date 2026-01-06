@@ -33,23 +33,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 80px;
+            width: 70px;
             flex-shrink: 0;
         }
 
         .logo-section svg {
-            width: 60px;
+            width: 50px;
             height: auto;
-            opacity: 0.9;
+            opacity: 0.85;
         }
 
         .location-card {
             flex: 1;
             display: flex;
+            flex-direction: row;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
-            padding: 12px 16px;
-            gap: 16px;
+            padding: 12px 14px;
+            gap: 12px;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.06);
             overflow: hidden;
@@ -60,19 +61,19 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            width: 140px;
+            width: 130px;
             flex-shrink: 0;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 16px;
+            padding-right: 12px;
         }
 
         .location-name {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -81,45 +82,44 @@
         .current-main {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .weather-icon {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             flex-shrink: 0;
         }
 
-        .weather-icon svg {
+        .weather-icon img {
             width: 100%;
             height: 100%;
         }
 
         .current-temp {
-            font-size: 44px;
+            font-size: 38px;
             font-weight: 300;
             color: #fff;
             line-height: 1;
         }
 
         .current-temp .unit {
-            font-size: 24px;
+            font-size: 20px;
             opacity: 0.5;
         }
 
         .current-detail {
-            font-size: 16px;
+            font-size: 14px;
             color: rgba(255, 255, 255, 0.4);
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .forecast-section {
             display: flex;
             flex: 1;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             min-width: 0;
-            overflow: hidden;
         }
 
         .forecast-item {
@@ -127,39 +127,36 @@
             flex-direction: column;
             align-items: center;
             padding: 0 4px;
-            min-width: 0;
-            flex: 1;
         }
 
         .forecast-time {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.35);
+            color: rgba(255, 255, 255, 0.4);
             margin-bottom: 4px;
         }
 
         .forecast-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             margin-bottom: 4px;
         }
 
-        .forecast-icon svg {
+        .forecast-icon img {
             width: 100%;
             height: 100%;
         }
 
         .forecast-temp {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 500;
             color: #fff;
-            white-space: nowrap;
         }
 
         .forecast-precip {
-            font-size: 14px;
+            font-size: 12px;
             color: #5dade2;
-            min-height: 20px;
+            min-height: 16px;
             font-weight: 500;
         }
 
@@ -176,21 +173,20 @@
             align-items: center;
             justify-content: center;
             color: rgba(255, 255, 255, 0.3);
-            font-size: 22px;
+            font-size: 18px;
         }
 
         .error-msg {
             color: #e74c3c;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .attribution {
             position: absolute;
-            bottom: 6px;
-            right: 12px;
-            font-size: 14px;
+            bottom: 4px;
+            right: 10px;
+            font-size: 12px;
             color: rgba(255, 255, 255, 0.15);
-            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -229,165 +225,98 @@
         };
 
         var workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
+        var iconBaseUrl = 'https://nrkno.github.io/yr-weather-symbols/symbols/darkmode/';
 
-        // Complete SVG icon set for all YR weather symbols
-        function getIconSvg(symbolCode) {
-            var baseName = symbolCode.replace(/_day|_night|_polartwilight/g, '');
-            var isNight = symbolCode.indexOf('_night') !== -1;
+        // Mapping from YR API symbol_code to NRK icon ID
+        var symbolToId = {
+            'clearsky_day': '01d',
+            'clearsky_night': '01n',
+            'clearsky_polartwilight': '01m',
+            'fair_day': '02d',
+            'fair_night': '02n',
+            'fair_polartwilight': '02m',
+            'partlycloudy_day': '03d',
+            'partlycloudy_night': '03n',
+            'partlycloudy_polartwilight': '03m',
+            'cloudy': '04',
+            'rainshowers_day': '05d',
+            'rainshowers_night': '05n',
+            'rainshowers_polartwilight': '05m',
+            'rainshowersandthunder_day': '06d',
+            'rainshowersandthunder_night': '06n',
+            'rainshowersandthunder_polartwilight': '06m',
+            'sleetshowers_day': '07d',
+            'sleetshowers_night': '07n',
+            'sleetshowers_polartwilight': '07m',
+            'snowshowers_day': '08d',
+            'snowshowers_night': '08n',
+            'snowshowers_polartwilight': '08m',
+            'rain': '09',
+            'heavyrain': '10',
+            'heavyrainandthunder': '11',
+            'sleet': '12',
+            'snow': '13',
+            'snowandthunder': '14',
+            'fog': '15',
+            'sleetshowersandthunder_day': '20d',
+            'sleetshowersandthunder_night': '20n',
+            'sleetshowersandthunder_polartwilight': '20m',
+            'snowshowersandthunder_day': '21d',
+            'snowshowersandthunder_night': '21n',
+            'snowshowersandthunder_polartwilight': '21m',
+            'rainandthunder': '22',
+            'sleetandthunder': '23',
+            'lightrainshowersandthunder_day': '24d',
+            'lightrainshowersandthunder_night': '24n',
+            'lightrainshowersandthunder_polartwilight': '24m',
+            'heavyrainshowersandthunder_day': '25d',
+            'heavyrainshowersandthunder_night': '25n',
+            'heavyrainshowersandthunder_polartwilight': '25m',
+            'lightssleetshowersandthunder_day': '26d',
+            'lightssleetshowersandthunder_night': '26n',
+            'lightssleetshowersandthunder_polartwilight': '26m',
+            'heavysleetshowersandthunder_day': '27d',
+            'heavysleetshowersandthunder_night': '27n',
+            'heavysleetshowersandthunder_polartwilight': '27m',
+            'lightssnowshowersandthunder_day': '28d',
+            'lightssnowshowersandthunder_night': '28n',
+            'lightssnowshowersandthunder_polartwilight': '28m',
+            'heavysnowshowersandthunder_day': '29d',
+            'heavysnowshowersandthunder_night': '29n',
+            'heavysnowshowersandthunder_polartwilight': '29m',
+            'lightrainandthunder': '30',
+            'lightsleetandthunder': '31',
+            'heavysleetandthunder': '32',
+            'lightsnowandthunder': '33',
+            'heavysnowandthunder': '34',
+            'lightrainshowers_day': '40d',
+            'lightrainshowers_night': '40n',
+            'lightrainshowers_polartwilight': '40m',
+            'heavyrainshowers_day': '41d',
+            'heavyrainshowers_night': '41n',
+            'heavyrainshowers_polartwilight': '41m',
+            'lightsleetshowers_day': '42d',
+            'lightsleetshowers_night': '42n',
+            'lightsleetshowers_polartwilight': '42m',
+            'heavysleetshowers_day': '43d',
+            'heavysleetshowers_night': '43n',
+            'heavysleetshowers_polartwilight': '43m',
+            'lightsnowshowers_day': '44d',
+            'lightsnowshowers_night': '44n',
+            'lightsnowshowers_polartwilight': '44m',
+            'heavysnowshowers_day': '45d',
+            'heavysnowshowers_night': '45n',
+            'heavysnowshowers_polartwilight': '45m',
+            'lightrain': '46',
+            'lightsleet': '47',
+            'heavysleet': '48',
+            'lightsnow': '49',
+            'heavysnow': '50'
+        };
 
-            var icons = {
-                // Clear sky
-                'clearsky': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M50 15 A35 35 0 1 0 50 85 A25 25 0 1 1 50 15" fill="#E8E8E8"/></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="4" stroke-linecap="round"><line x1="50" y1="8" x2="50" y2="20"/><line x1="50" y1="80" x2="50" y2="92"/><line x1="8" y1="50" x2="20" y2="50"/><line x1="80" y1="50" x2="92" y2="50"/><line x1="20" y1="20" x2="29" y2="29"/><line x1="71" y1="71" x2="80" y2="80"/><line x1="20" y1="80" x2="29" y2="71"/><line x1="71" y1="29" x2="80" y2="20"/></g></svg>',
-
-                // Fair (light clouds)
-                'fair': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M30 20 A20 20 0 1 0 30 60 A14 14 0 1 1 30 20" fill="#E8E8E8"/><ellipse cx="62" cy="65" rx="22" ry="15" fill="#B8B8B8"/><ellipse cx="75" cy="60" rx="18" ry="14" fill="#D0D0D0"/><ellipse cx="68" cy="72" rx="26" ry="12" fill="#E0E0E0"/></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="35" cy="35" r="18" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="3" stroke-linecap="round"><line x1="35" y1="8" x2="35" y2="14"/><line x1="35" y1="56" x2="35" y2="62"/><line x1="8" y1="35" x2="14" y2="35"/><line x1="56" y1="35" x2="62" y2="35"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="50" y1="50" x2="54" y2="54"/><line x1="16" y1="54" x2="20" y2="50"/><line x1="50" y1="20" x2="54" y2="16"/></g><ellipse cx="62" cy="68" rx="22" ry="15" fill="#B8B8B8"/><ellipse cx="75" cy="63" rx="18" ry="14" fill="#D0D0D0"/><ellipse cx="68" cy="75" rx="26" ry="12" fill="#E0E0E0"/></svg>',
-
-                // Partly cloudy
-                'partlycloudy': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M28 18 A18 18 0 1 0 28 54 A12 12 0 1 1 28 18" fill="#E8E8E8"/><ellipse cx="55" cy="62" rx="24" ry="17" fill="#A0A0A0"/><ellipse cx="72" cy="58" rx="22" ry="18" fill="#B8B8B8"/><ellipse cx="65" cy="70" rx="30" ry="15" fill="#D0D0D0"/></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="35" cy="32" r="20" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="3" stroke-linecap="round"><line x1="35" y1="4" x2="35" y2="10"/><line x1="35" y1="54" x2="35" y2="60"/><line x1="7" y1="32" x2="13" y2="32"/><line x1="57" y1="32" x2="63" y2="32"/><line x1="15" y1="12" x2="19" y2="16"/><line x1="51" y1="48" x2="55" y2="52"/><line x1="15" y1="52" x2="19" y2="48"/><line x1="51" y1="16" x2="55" y2="12"/></g><ellipse cx="55" cy="65" rx="24" ry="17" fill="#A0A0A0"/><ellipse cx="72" cy="60" rx="22" ry="18" fill="#B8B8B8"/><ellipse cx="65" cy="72" rx="30" ry="15" fill="#D0D0D0"/></svg>',
-
-                // Cloudy
-                'cloudy': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="55" rx="24" ry="18" fill="#909090"/><ellipse cx="55" cy="48" rx="28" ry="22" fill="#A8A8A8"/><ellipse cx="75" cy="55" rx="20" ry="16" fill="#B8B8B8"/><ellipse cx="50" cy="65" rx="38" ry="18" fill="#C8C8C8"/></svg>',
-
-                // Fog
-                'fog': '<svg viewBox="0 0 100 100"><g stroke="#A8A8A8" stroke-width="7" stroke-linecap="round"><line x1="12" y1="30" x2="88" y2="30"/><line x1="18" y1="45" x2="82" y2="45"/><line x1="12" y1="60" x2="88" y2="60"/><line x1="22" y1="75" x2="78" y2="75"/></g></svg>',
-
-                // Light rain
-                'lightrain': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="32" rx="22" ry="16" fill="#808080"/><ellipse cx="55" cy="28" rx="26" ry="20" fill="#909090"/><ellipse cx="48" cy="40" rx="34" ry="17" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="35" y1="58" x2="32" y2="72"/><line x1="55" y1="58" x2="52" y2="72"/></g></svg>',
-
-                // Rain
-                'rain': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#707070"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#808080"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#909090"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="28" y1="56" x2="22" y2="75"/><line x1="45" y1="58" x2="39" y2="77"/><line x1="62" y1="56" x2="56" y2="75"/><line x1="75" y1="54" x2="69" y2="73"/></g></svg>',
-
-                // Heavy rain
-                'heavyrain': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#606060"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#707070"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#808080"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="22" y1="54" x2="14" y2="78"/><line x1="38" y1="56" x2="30" y2="80"/><line x1="54" y1="54" x2="46" y2="78"/><line x1="70" y1="52" x2="62" y2="76"/><line x1="82" y1="50" x2="74" y2="74"/></g></svg>',
-
-                // Light rain showers
-                'lightrainshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="72" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="62" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="50" y1="78" x2="47" y2="90"/><line x1="68" y1="78" x2="65" y2="90"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="75" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="65" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="52" y1="78" x2="49" y2="90"/><line x1="70" y1="78" x2="67" y2="90"/></g></svg>',
-
-                // Rain showers
-                'rainshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="72" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="62" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="42" y1="75" x2="36" y2="92"/><line x1="58" y1="75" x2="52" y2="92"/><line x1="74" y1="73" x2="68" y2="90"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="75" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="65" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="45" y1="75" x2="39" y2="92"/><line x1="61" y1="75" x2="55" y2="92"/><line x1="77" y1="73" x2="71" y2="90"/></g></svg>',
-
-                // Heavy rain showers
-                'heavyrainshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="55" rx="30" ry="14" fill="#909090"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="38" y1="70" x2="30" y2="92"/><line x1="54" y1="70" x2="46" y2="92"/><line x1="70" y1="68" x2="62" y2="90"/><line x1="82" y1="66" x2="74" y2="88"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="55" rx="30" ry="14" fill="#909090"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="40" y1="70" x2="32" y2="92"/><line x1="56" y1="70" x2="48" y2="92"/><line x1="72" y1="68" x2="64" y2="90"/><line x1="84" y1="66" x2="76" y2="88"/></g></svg>',
-
-                // Light snow
-                'lightsnow': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="32" rx="22" ry="16" fill="#909090"/><ellipse cx="55" cy="28" rx="26" ry="20" fill="#A8A8A8"/><ellipse cx="48" cy="40" rx="34" ry="17" fill="#B8B8B8"/><g fill="#FFFFFF"><circle cx="35" cy="62" r="5"/><circle cx="58" cy="68" r="5"/></g></svg>',
-
-                // Snow
-                'snow': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#808080"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#909090"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#A8A8A8"/><g fill="#FFFFFF"><circle cx="28" cy="60" r="5"/><circle cx="48" cy="66" r="5"/><circle cx="68" cy="60" r="5"/><circle cx="38" cy="78" r="5"/><circle cx="58" cy="82" r="5"/></g></svg>',
-
-                // Heavy snow
-                'heavysnow': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#707070"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#808080"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#909090"/><g fill="#FFFFFF"><circle cx="22" cy="56" r="5"/><circle cx="40" cy="62" r="5"/><circle cx="58" cy="56" r="5"/><circle cx="76" cy="60" r="5"/><circle cx="30" cy="76" r="5"/><circle cx="50" cy="80" r="5"/><circle cx="68" cy="76" r="5"/></g></svg>',
-
-                // Light snow showers
-                'lightsnowshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="72" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="62" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g fill="#FFFFFF"><circle cx="52" cy="80" r="5"/><circle cx="72" cy="84" r="5"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="75" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="65" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g fill="#FFFFFF"><circle cx="55" cy="80" r="5"/><circle cx="75" cy="84" r="5"/></g></svg>',
-
-                // Snow showers
-                'snowshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="72" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="62" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g fill="#FFFFFF"><circle cx="45" cy="76" r="5"/><circle cx="62" cy="80" r="5"/><circle cx="78" cy="76" r="5"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="75" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="65" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g fill="#FFFFFF"><circle cx="48" cy="76" r="5"/><circle cx="65" cy="80" r="5"/><circle cx="80" cy="76" r="5"/></g></svg>',
-
-                // Heavy snow showers
-                'heavysnowshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="55" rx="30" ry="14" fill="#909090"/><g fill="#FFFFFF"><circle cx="38" cy="72" r="5"/><circle cx="55" cy="76" r="5"/><circle cx="72" cy="72" r="5"/><circle cx="46" cy="88" r="5"/><circle cx="64" cy="90" r="5"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="55" rx="30" ry="14" fill="#909090"/><g fill="#FFFFFF"><circle cx="40" cy="72" r="5"/><circle cx="57" cy="76" r="5"/><circle cx="74" cy="72" r="5"/><circle cx="48" cy="88" r="5"/><circle cx="66" cy="90" r="5"/></g></svg>',
-
-                // Light sleet
-                'lightsleet': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="32" rx="22" ry="16" fill="#808080"/><ellipse cx="55" cy="28" rx="26" ry="20" fill="#909090"/><ellipse cx="48" cy="40" rx="34" ry="17" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="35" y1="58" x2="32" y2="70"/></g><g fill="#FFFFFF"><circle cx="55" cy="72" r="4"/></g></svg>',
-
-                // Sleet
-                'sleet': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#707070"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#808080"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#909090"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="30" y1="56" x2="25" y2="72"/><line x1="55" y1="56" x2="50" y2="72"/></g><g fill="#FFFFFF"><circle cx="40" cy="78" r="4"/><circle cx="70" cy="72" r="4"/></g></svg>',
-
-                // Heavy sleet
-                'heavysleet': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#606060"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#707070"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#808080"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="25" y1="54" x2="18" y2="74"/><line x1="45" y1="54" x2="38" y2="74"/><line x1="65" y1="52" x2="58" y2="72"/></g><g fill="#FFFFFF"><circle cx="32" cy="82" r="4"/><circle cx="52" cy="84" r="4"/><circle cx="78" cy="76" r="4"/></g></svg>',
-
-                // Light sleet showers
-                'lightsleetshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="72" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="62" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="52" y1="78" x2="49" y2="88"/></g><g fill="#FFFFFF"><circle cx="70" cy="86" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="55" rx="24" ry="17" fill="#909090"/><ellipse cx="75" cy="50" rx="20" ry="16" fill="#A8A8A8"/><ellipse cx="65" cy="62" rx="30" ry="14" fill="#B8B8B8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="55" y1="78" x2="52" y2="88"/></g><g fill="#FFFFFF"><circle cx="72" cy="86" r="4"/></g></svg>',
-
-                // Sleet showers
-                'sleetshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="72" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="62" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="48" y1="75" x2="43" y2="88"/><line x1="68" y1="73" x2="63" y2="86"/></g><g fill="#FFFFFF"><circle cx="55" cy="90" r="4"/><circle cx="78" cy="84" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="28" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="6" x2="28" y2="11"/><line x1="28" y1="45" x2="28" y2="50"/><line x1="6" y1="28" x2="11" y2="28"/><line x1="45" y1="28" x2="50" y2="28"/><line x1="12" y1="12" x2="16" y2="16"/><line x1="40" y1="40" x2="44" y2="44"/><line x1="12" y1="44" x2="16" y2="40"/><line x1="40" y1="16" x2="44" y2="12"/></g><ellipse cx="58" cy="52" rx="24" ry="17" fill="#808080"/><ellipse cx="75" cy="47" rx="20" ry="16" fill="#909090"/><ellipse cx="65" cy="59" rx="30" ry="14" fill="#A8A8A8"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="50" y1="75" x2="45" y2="88"/><line x1="70" y1="73" x2="65" y2="86"/></g><g fill="#FFFFFF"><circle cx="57" cy="90" r="4"/><circle cx="80" cy="84" r="4"/></g></svg>',
-
-                // Heavy sleet showers
-                'heavysleetshowers': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="55" rx="30" ry="14" fill="#909090"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="42" y1="70" x2="35" y2="88"/><line x1="62" y1="68" x2="55" y2="86"/><line x1="78" y1="66" x2="71" y2="84"/></g><g fill="#FFFFFF"><circle cx="45" cy="90" r="4"/><circle cx="65" cy="88" r="4"/><circle cx="82" cy="82" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="48" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="43" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="55" rx="30" ry="14" fill="#909090"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="44" y1="70" x2="37" y2="88"/><line x1="64" y1="68" x2="57" y2="86"/><line x1="80" y1="66" x2="73" y2="84"/></g><g fill="#FFFFFF"><circle cx="47" cy="90" r="4"/><circle cx="67" cy="88" r="4"/><circle cx="84" cy="82" r="4"/></g></svg>',
-
-                // Thunder
-                'rainandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#505050"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#606060"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#707070"/><polygon points="55,38 44,58 52,58 40,82 68,52 56,52 64,38" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="22" y1="54" x2="16" y2="72"/><line x1="78" y1="50" x2="72" y2="68"/></g></svg>',
-
-                'lightrainandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#606060"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#707070"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#808080"/><polygon points="55,40 46,58 52,58 42,78 66,54 56,54 62,40" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="25" y1="56" x2="22" y2="68"/><line x1="75" y1="52" x2="72" y2="64"/></g></svg>',
-
-                'heavyrainandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="26" rx="22" ry="16" fill="#404040"/><ellipse cx="55" cy="22" rx="26" ry="20" fill="#505050"/><ellipse cx="48" cy="34" rx="34" ry="17" fill="#606060"/><polygon points="55,36 42,60 52,60 38,88 72,52 58,52 66,36" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="18" y1="50" x2="10" y2="74"/><line x1="82" y1="46" x2="74" y2="70"/></g></svg>',
-
-                'sleetandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#505050"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#606060"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#707070"/><polygon points="55,38 44,58 52,58 40,82 68,52 56,52 64,38" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="22" y1="54" x2="18" y2="68"/></g><g fill="#FFFFFF"><circle cx="75" cy="68" r="4"/></g></svg>',
-
-                'lightsleetandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#606060"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#707070"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#808080"/><polygon points="55,40 46,58 52,58 42,78 66,54 56,54 62,40" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="25" y1="56" x2="22" y2="66"/></g><g fill="#FFFFFF"><circle cx="72" cy="66" r="4"/></g></svg>',
-
-                'heavysleetandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="26" rx="22" ry="16" fill="#404040"/><ellipse cx="55" cy="22" rx="26" ry="20" fill="#505050"/><ellipse cx="48" cy="34" rx="34" ry="17" fill="#606060"/><polygon points="55,36 42,60 52,60 38,88 72,52 58,52 66,36" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="18" y1="50" x2="12" y2="70"/><line x1="32" y1="52" x2="26" y2="72"/></g><g fill="#FFFFFF"><circle cx="78" cy="66" r="4"/><circle cx="88" cy="72" r="4"/></g></svg>',
-
-                'snowandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="28" rx="22" ry="16" fill="#505050"/><ellipse cx="55" cy="24" rx="26" ry="20" fill="#606060"/><ellipse cx="48" cy="36" rx="34" ry="17" fill="#707070"/><polygon points="55,38 44,58 52,58 40,82 68,52 56,52 64,38" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="22" cy="62" r="4"/><circle cx="78" cy="58" r="4"/><circle cx="30" cy="76" r="4"/></g></svg>',
-
-                'lightsnowandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="30" rx="22" ry="16" fill="#606060"/><ellipse cx="55" cy="26" rx="26" ry="20" fill="#707070"/><ellipse cx="48" cy="38" rx="34" ry="17" fill="#808080"/><polygon points="55,40 46,58 52,58 42,78 66,54 56,54 62,40" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="25" cy="62" r="4"/><circle cx="75" cy="58" r="4"/></g></svg>',
-
-                'heavysnowandthunder': '<svg viewBox="0 0 100 100"><ellipse cx="32" cy="26" rx="22" ry="16" fill="#404040"/><ellipse cx="55" cy="22" rx="26" ry="20" fill="#505050"/><ellipse cx="48" cy="34" rx="34" ry="17" fill="#606060"/><polygon points="55,36 42,60 52,60 38,88 72,52 58,52 66,36" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="18" cy="58" r="5"/><circle cx="82" cy="54" r="5"/><circle cx="26" cy="74" r="5"/><circle cx="88" cy="70" r="5"/></g></svg>',
-
-                // Thunder showers
-                'rainshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="72" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="62" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="62,50 52,68 58,68 48,88 74,64 64,64 70,50" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="40" y1="68" x2="35" y2="82"/><line x1="82" y1="62" x2="77" y2="76"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="22" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="0" x2="28" y2="5"/><line x1="28" y1="39" x2="28" y2="44"/><line x1="6" y1="22" x2="11" y2="22"/><line x1="45" y1="22" x2="50" y2="22"/><line x1="12" y1="6" x2="16" y2="10"/><line x1="40" y1="34" x2="44" y2="38"/><line x1="12" y1="38" x2="16" y2="34"/><line x1="40" y1="10" x2="44" y2="6"/></g><ellipse cx="58" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="75" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="65" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="65,50 55,68 61,68 51,88 77,64 67,64 73,50" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="42" y1="68" x2="37" y2="82"/><line x1="85" y1="62" x2="80" y2="76"/></g></svg>',
-
-                'lightrainshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="62,55 54,70 59,70 50,86 72,68 64,68 70,55" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="42" y1="73" x2="39" y2="84"/><line x1="80" y1="68" x2="77" y2="79"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="65,55 57,70 62,70 53,86 75,68 67,68 73,55" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="44" y1="73" x2="41" y2="84"/><line x1="82" y1="68" x2="79" y2="79"/></g></svg>',
-
-                'heavyrainshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 10 A14 14 0 1 0 22 38 A10 10 0 1 1 22 10" fill="#E8E8E8"/><ellipse cx="55" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="72" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="62" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="62,47 50,68 58,68 45,92 76,62 65,62 72,47" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="36" y1="65" x2="28" y2="85"/><line x1="82" y1="58" x2="74" y2="78"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="20" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="-2" x2="28" y2="3"/><line x1="28" y1="37" x2="28" y2="42"/><line x1="6" y1="20" x2="11" y2="20"/><line x1="45" y1="20" x2="50" y2="20"/><line x1="12" y1="4" x2="16" y2="8"/><line x1="40" y1="32" x2="44" y2="36"/><line x1="12" y1="36" x2="16" y2="32"/><line x1="40" y1="8" x2="44" y2="4"/></g><ellipse cx="58" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="75" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="65" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="65,47 53,68 61,68 48,92 79,62 68,62 75,47" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="38" y1="65" x2="30" y2="85"/><line x1="85" y1="58" x2="77" y2="78"/></g></svg>',
-
-                'sleetshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="72" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="62" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="62,50 52,68 58,68 48,88 74,64 64,64 70,50" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="40" y1="68" x2="36" y2="80"/></g><g fill="#FFFFFF"><circle cx="82" cy="74" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="22" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="0" x2="28" y2="5"/><line x1="28" y1="39" x2="28" y2="44"/><line x1="6" y1="22" x2="11" y2="22"/><line x1="45" y1="22" x2="50" y2="22"/><line x1="12" y1="6" x2="16" y2="10"/><line x1="40" y1="34" x2="44" y2="38"/><line x1="12" y1="38" x2="16" y2="34"/><line x1="40" y1="10" x2="44" y2="6"/></g><ellipse cx="58" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="75" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="65" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="65,50 55,68 61,68 51,88 77,64 67,64 73,50" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="42" y1="68" x2="38" y2="80"/></g><g fill="#FFFFFF"><circle cx="85" cy="74" r="4"/></g></svg>',
-
-                'lightssleetshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="62,55 54,70 59,70 50,86 72,68 64,68 70,55" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="44" y1="73" x2="42" y2="82"/></g><g fill="#FFFFFF"><circle cx="78" cy="80" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="65,55 57,70 62,70 53,86 75,68 67,68 73,55" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="3" stroke-linecap="round"><line x1="46" y1="73" x2="44" y2="82"/></g><g fill="#FFFFFF"><circle cx="80" cy="80" r="4"/></g></svg>',
-
-                'heavysleetshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 10 A14 14 0 1 0 22 38 A10 10 0 1 1 22 10" fill="#E8E8E8"/><ellipse cx="55" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="72" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="62" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="62,47 50,68 58,68 45,92 76,62 65,62 72,47" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="38" y1="65" x2="32" y2="82"/></g><g fill="#FFFFFF"><circle cx="82" cy="70" r="4"/><circle cx="88" cy="82" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="20" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="-2" x2="28" y2="3"/><line x1="28" y1="37" x2="28" y2="42"/><line x1="6" y1="20" x2="11" y2="20"/><line x1="45" y1="20" x2="50" y2="20"/><line x1="12" y1="4" x2="16" y2="8"/><line x1="40" y1="32" x2="44" y2="36"/><line x1="12" y1="36" x2="16" y2="32"/><line x1="40" y1="8" x2="44" y2="4"/></g><ellipse cx="58" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="75" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="65" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="65,47 53,68 61,68 48,92 79,62 68,62 75,47" fill="#FFD700"/><g stroke="#5DADE2" stroke-width="4" stroke-linecap="round"><line x1="40" y1="65" x2="34" y2="82"/></g><g fill="#FFFFFF"><circle cx="85" cy="70" r="4"/><circle cx="90" cy="82" r="4"/></g></svg>',
-
-                'snowshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 12 A14 14 0 1 0 22 40 A10 10 0 1 1 22 12" fill="#E8E8E8"/><ellipse cx="55" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="72" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="62" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="62,50 52,68 58,68 48,88 74,64 64,64 70,50" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="40" cy="74" r="4"/><circle cx="82" cy="70" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="22" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="0" x2="28" y2="5"/><line x1="28" y1="39" x2="28" y2="44"/><line x1="6" y1="22" x2="11" y2="22"/><line x1="45" y1="22" x2="50" y2="22"/><line x1="12" y1="6" x2="16" y2="10"/><line x1="40" y1="34" x2="44" y2="38"/><line x1="12" y1="38" x2="16" y2="34"/><line x1="40" y1="10" x2="44" y2="6"/></g><ellipse cx="58" cy="45" rx="24" ry="17" fill="#606060"/><ellipse cx="75" cy="40" rx="20" ry="16" fill="#707070"/><ellipse cx="65" cy="52" rx="30" ry="14" fill="#808080"/><polygon points="65,50 55,68 61,68 51,88 77,64 67,64 73,50" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="42" cy="74" r="4"/><circle cx="85" cy="70" r="4"/></g></svg>',
-
-                'lightssnowshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 15 A14 14 0 1 0 22 43 A10 10 0 1 1 22 15" fill="#E8E8E8"/><ellipse cx="55" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="72" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="62" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="62,55 54,70 59,70 50,86 72,68 64,68 70,55" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="44" cy="78" r="4"/><circle cx="80" cy="76" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="25" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="3" x2="28" y2="8"/><line x1="28" y1="42" x2="28" y2="47"/><line x1="6" y1="25" x2="11" y2="25"/><line x1="45" y1="25" x2="50" y2="25"/><line x1="12" y1="9" x2="16" y2="13"/><line x1="40" y1="37" x2="44" y2="41"/><line x1="12" y1="41" x2="16" y2="37"/><line x1="40" y1="13" x2="44" y2="9"/></g><ellipse cx="58" cy="50" rx="24" ry="17" fill="#707070"/><ellipse cx="75" cy="45" rx="20" ry="16" fill="#808080"/><ellipse cx="65" cy="57" rx="30" ry="14" fill="#909090"/><polygon points="65,55 57,70 62,70 53,86 75,68 67,68 73,55" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="46" cy="78" r="4"/><circle cx="82" cy="76" r="4"/></g></svg>',
-
-                'heavysnowshowersandthunder': isNight ?
-                    '<svg viewBox="0 0 100 100"><path d="M22 10 A14 14 0 1 0 22 38 A10 10 0 1 1 22 10" fill="#E8E8E8"/><ellipse cx="55" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="72" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="62" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="62,47 50,68 58,68 45,92 76,62 65,62 72,47" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="38" cy="70" r="4"/><circle cx="82" cy="66" r="4"/><circle cx="44" cy="84" r="4"/><circle cx="88" cy="80" r="4"/></g></svg>' :
-                    '<svg viewBox="0 0 100 100"><circle cx="28" cy="20" r="16" fill="#FFD93D"/><g stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round"><line x1="28" y1="-2" x2="28" y2="3"/><line x1="28" y1="37" x2="28" y2="42"/><line x1="6" y1="20" x2="11" y2="20"/><line x1="45" y1="20" x2="50" y2="20"/><line x1="12" y1="4" x2="16" y2="8"/><line x1="40" y1="32" x2="44" y2="36"/><line x1="12" y1="36" x2="16" y2="32"/><line x1="40" y1="8" x2="44" y2="4"/></g><ellipse cx="58" cy="42" rx="24" ry="17" fill="#505050"/><ellipse cx="75" cy="37" rx="20" ry="16" fill="#606060"/><ellipse cx="65" cy="49" rx="30" ry="14" fill="#707070"/><polygon points="65,47 53,68 61,68 48,92 79,62 68,62 75,47" fill="#FFD700"/><g fill="#FFFFFF"><circle cx="40" cy="70" r="4"/><circle cx="85" cy="66" r="4"/><circle cx="46" cy="84" r="4"/><circle cx="90" cy="80" r="4"/></g></svg>'
-            };
-
-            // Return matching icon or fallback to cloudy
-            return icons[baseName] || icons['cloudy'];
+        function getIconUrl(symbolCode) {
+            var iconId = symbolToId[symbolCode] || '04';
+            return iconBaseUrl + iconId + '.svg';
         }
 
         function getWindArrow(degrees) {
@@ -486,7 +415,7 @@
 
                     forecastHTML += '<div class="forecast-item">' +
                         '<span class="forecast-time">' + formatTime(closest.time) + '</span>' +
-                        '<span class="forecast-icon">' + getIconSvg(fSymbol) + '</span>' +
+                        '<span class="forecast-icon"><img src="' + getIconUrl(fSymbol) + '" alt=""></span>' +
                         '<span class="forecast-temp ' + getTempClass(fTemp) + '">' + fTemp + '°</span>' +
                         '<span class="forecast-precip">' + (fPrecip > 0.1 ? fPrecip.toFixed(1) + 'mm' : '') + '</span>' +
                         '</div>';
@@ -495,7 +424,7 @@
                 card.innerHTML = '<div class="current-section">' +
                     '<div class="location-name">' + loc.name + '</div>' +
                     '<div class="current-main">' +
-                        '<span class="weather-icon">' + getIconSvg(currentSymbol) + '</span>' +
+                        '<span class="weather-icon"><img src="' + getIconUrl(currentSymbol) + '" alt=""></span>' +
                         '<span class="current-temp ' + getTempClass(currentTemp) + '">' + currentTemp + '<span class="unit">°</span></span>' +
                     '</div>' +
                     '<div class="current-detail">' + getWindArrow(windDir) + ' ' + windSpeed + ' m/s</div>' +
