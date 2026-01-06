@@ -318,28 +318,36 @@
                 ((today.getMonth() + 1) < 10 ? '0' : '') + (today.getMonth() + 1) + '-' +
                 (today.getDate() < 10 ? '0' : '') + today.getDate();
 
-            var sunUrl = 'https://api.met.no/weatherapi/sunrise/3.0/sun?lat=59.79&lon=10.25&date=' + dateStr + '&offset=+01:00';
-            var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sunUrl);
+            var sunUrl = 'https://api.met.no/weatherapi/sunrise/3.0/sun?lat=59.79&lon=10.25&date=' + dateStr + '&offset=%2B01:00';
 
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', proxyUrl, true);
+            xhr.open('GET', sunUrl, true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        if (data.properties && data.properties.sunrise && data.properties.sunset) {
-                            var sunrise = new Date(data.properties.sunrise.time);
-                            var sunset = new Date(data.properties.sunset.time);
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            if (data.properties && data.properties.sunrise && data.properties.sunset) {
+                                // Parse time string directly (format: "2025-01-06T09:15+01:00")
+                                var sunriseTime = data.properties.sunrise.time;
+                                var sunsetTime = data.properties.sunset.time;
 
-                            document.getElementById('sunrise').textContent =
-                                (sunrise.getHours() < 10 ? '0' : '') + sunrise.getHours() + ':' +
-                                (sunrise.getMinutes() < 10 ? '0' : '') + sunrise.getMinutes();
-                            document.getElementById('sunset').textContent =
-                                (sunset.getHours() < 10 ? '0' : '') + sunset.getHours() + ':' +
-                                (sunset.getMinutes() < 10 ? '0' : '') + sunset.getMinutes();
+                                // Extract hours and minutes from ISO string
+                                var srMatch = sunriseTime.match(/T(\d{2}):(\d{2})/);
+                                var ssMatch = sunsetTime.match(/T(\d{2}):(\d{2})/);
+
+                                if (srMatch) {
+                                    document.getElementById('sunrise').textContent = srMatch[1] + ':' + srMatch[2];
+                                }
+                                if (ssMatch) {
+                                    document.getElementById('sunset').textContent = ssMatch[1] + ':' + ssMatch[2];
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Sun times parse error:', e);
                         }
-                    } catch (e) {
-                        console.error('Sun times parse error:', e);
+                    } else {
+                        console.error('Sun API error:', xhr.status);
                     }
                 }
             };
