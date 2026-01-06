@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LVVA KF Banner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background: #0a0a0a;
+            width: 1920px;
+            height: 100px;
+            overflow: hidden;
+        }
+
+        .banner-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+            width: 280px;
+        }
+
+        .logo-section svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .news-section {
+            flex: 1;
+            overflow: hidden;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .news-label {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #c0392b;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 4px;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .news-scroll {
+            display: flex;
+            animation: scroll 60s linear infinite;
+            padding-left: 100px;
+        }
+
+        .news-item {
+            white-space: nowrap;
+            padding: 0 50px;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+        }
+
+        .news-item::after {
+            content: '•';
+            margin-left: 50px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .clock-section {
+            flex-shrink: 0;
+            text-align: right;
+            width: 200px;
+        }
+
+        .clock-time {
+            font-size: 48px;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .clock-date {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-container">
+        <div class="logo-section">
+            <svg viewBox="0 0 595.28 841.89" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <style>.cls-1{fill:#fff;}</style>
+                </defs>
+                <path class="cls-1" d="M289.43,543.85c-1.06.92-2.07,1.85-3,2.82a31.56,31.56,0,0,1-3.19-2.76c-16.27-16.31-32.58-32.59-48.77-49A24.46,24.46,0,0,1,228,479.74c-.65-7.38,1.16-14.07,5.35-20.06,10.94-15.66,21.77-31.4,32.62-47.12.57-.82,1.07-1.68,1.53-2.41l-20.79-14.29c-.8,1.17-1.62,2.43-2.5,3.65q-17.67,24.4-35.33,48.82a71.68,71.68,0,0,0-8.13,15.4,55.85,55.85,0,0,0,7.13,51.78,81.06,81.06,0,0,0,9.57,11.3q35.73,35.85,71.55,71.59a8.89,8.89,0,0,0,1.16.88l.21-.29Zm9.74,66-75.59-75.45a61.52,61.52,0,0,1-14.51-25,55.62,55.62,0,0,1,5.45-44.14,33.65,33.65,0,0,1,3.28-4.87l39.71-54.91c.57-.78,1.09-1.6,1.81-2.67l-20.73-14.39c-.54.71-1,1.26-1.41,1.84q-21.88,30.24-43.74,60.49c-8.57,11.88-12.3,25.15-11,39.81a68.13,68.13,0,0,0,8.27,27.41A86.41,86.41,0,0,0,203.82,534l90.87,90.79a8.48,8.48,0,0,0,1.19.87l.17-.25Zm-77.6-161,23.79-32.88-20.86-14.31-27.78,38.41a85.16,85.16,0,0,0-10.93,20.9,68.45,68.45,0,0,0,2.64,53.89,85.58,85.58,0,0,0,14.63,22.3Q238.3,573,273.7,608.73c1.19,1.18,2.45,2.3,3.86,3.62l.23-.2c-1-1-2-1.95-2.94-3q-39.49-39.48-78.95-79A57.1,57.1,0,0,1,221.57,448.84Zm99.94,94.79c1-.88,2-1.76,2.91-2.69q24.78-24.89,49.61-49.75a24.91,24.91,0,0,0,6.79-14.33,37.11,37.11,0,0,0-5.24-23.28c-10.8-17.32-22.56-34-34.33-50.67-2.53-3.58-5.21-7.06-7.89-10.69l20.76-14.31c.64.82,1.29,1.61,1.9,2.43q21.32,28.52,42.58,57.1a60.06,60.06,0,0,1,7,12.68,55.93,55.93,0,0,1-5.46,51.37,79.16,79.16,0,0,1-10.31,12.57c-23.75,23.86-47.56,47.67-71.38,71.46a9.78,9.78,0,0,1-1.17.88,2.87,2.87,0,0,1-.13-.32Zm87.8-48.06a67.13,67.13,0,0,0-8-26.67,86.19,86.19,0,0,0-12.76-17.56q-20.82-22.65-40-46.71c-7.26-9.09-14.09-18.52-21.09-27.81-.69-.92-1.33-1.87-2.13-3l20.75-14.31c.78,1,1.52,1.9,2.22,2.83q24,32.05,47.87,64.13A63,63,0,0,1,405,450.32a55.74,55.74,0,0,1-5.35,43.85,73.86,73.86,0,0,1-9.3,12.82q-35.53,35.63-71.15,71.17a13.29,13.29,0,0,1-1.35,1.08l-.11-.2,1.17-1.16q37.65-37.61,75.27-75.25A57.31,57.31,0,0,0,409.31,494.57Zm-55.53,83.66.22.21a9.86,9.86,0,0,0,1.2-1q38.67-38.64,77.3-77.31a57.6,57.6,0,0,0,14.36-23.73,55.74,55.74,0,0,0-6.07-46.69,85.87,85.87,0,0,0-9.65-13q-17.55-19.14-33.69-39.46c-10.31-12.94-20.08-26.31-30.05-39.53-.73-1-1.41-2-2.26-3.18l20.81-14.33c.87,1.11,1.68,2.08,2.44,3.09,14.4,19.06,28.71,38.18,43.23,57.14a170.89,170.89,0,0,1,14,21.92,68,68,0,0,1,7.64,37.92,66.39,66.39,0,0,1-11.3,32.84,92.46,92.46,0,0,1-12.7,14.37q-45.56,45.58-91.13,91.15A13.84,13.84,0,0,1,353.78,578.23Z"/>
+                <path class="cls-1" d="M299.12,372c10.45,14.36,20.75,28.52,31.08,42.66s20.59,28.33,31,42.42c5.27,7.14,6.66,15,4.52,23.53a31.14,31.14,0,0,1-8.39,14.13q-32.76,32.93-65.67,65.7a18.28,18.28,0,0,1-2.85,2.3c1-1,1.85-2,2.78-2.9q32.15-32.1,64.27-64.23a28.08,28.08,0,0,0,8-14.77,25.77,25.77,0,0,0-4.17-19.82q-26.91-37-53.85-73.88C304.2,385,302.56,382.82,300.88,380.6l-26.5,36.63c-1.37-1-2.59-1.84-3.88-2.77l28.84-39.88C299.47,373.94,299.27,373,299.12,372Z"/>
+                <path class="cls-1" d="M301,608.88l-.24.17a4.68,4.68,0,0,1-.59-.49q-41-41-82-82A32.16,32.16,0,0,1,209,511.75,32.73,32.73,0,0,1,214,490.14c.72-1.14,1.49-2.24,2.46-3.68l-19.55-13.42c-1,1.3-1.92,2.6-2.91,3.85a50,50,0,0,0-9.38,20.34,52.18,52.18,0,0,0,9.87,44.92,68.86,68.86,0,0,0,8.3,8.94q48.06,48.18,96.23,96.25c.68.68,1.48,1.24,2.23,1.86Z"/>
+                <path class="cls-1" d="M304.45,615.19c-.9-.76-1.77-1.49-2.63-2.25a.94.94,0,0,1,.2-.17c.77.61,1.54,1.21,2.29,1.84l-95.72-95.8a64.52,64.52,0,0,1-12.1-15.09,52.09,52.09,0,0,1,2.63-55.17c1.1-1.56,2.28-3.06,3.55-4.75l-19.48-13.42a79.4,79.4,0,0,0-7.85,12.36,64.73,64.73,0,0,0,2.52,64.35,80.77,80.77,0,0,0,12.42,15.38q48.9,49,97.9,97.93c.66.66,1.39,1.26,2.09,1.88l.17-.15,5.86-5.85A8.59,8.59,0,0,0,304.45,615.19Z"/>
+                <path class="cls-1" d="M423.18,430.42a88.58,88.58,0,0,0-8.75-14.55c-21.84-29.23-43.61-58.51-65.52-87.68a10.24,10.24,0,0,1-.75-1.22c.35-.26.55-.47.79-.56a2.58,2.58,0,0,1,1,.46q34.14,45.58,68.17,91.24a65.4,65.4,0,0,1,11.55,27.83,64.23,64.23,0,0,1-10.42,46.32,74.46,74.46,0,0,1-9.77,11.61l-98,98a9.74,9.74,0,0,1-1.31,1l-.13-.19c.39-.42.77-.86,1.18-1.27l98.37-98.33a63.91,63.91,0,0,0,15-23A64.87,64.87,0,0,0,423.18,430.42Z"/>
+                <path class="cls-1" d="M309.78,621.5l.17.16-2.3,2.3-.22-.15c.56-.55,1.12-1.1,1.68-1.64Z"/>
+            </svg>
+            <div class="logo-text">
+                <span class="logo-title">LVVA KF</span>
+                <span class="logo-subtitle">Lier kommune</span>
+            </div>
+        </div>
+
+        <div class="news-section">
+            <span class="news-label">Nyheter</span>
+            <div class="news-scroll" id="newsScroll">
+                <span class="news-item">Laster nyheter...</span>
+            </div>
+        </div>
+
+        <div class="clock-section">
+            <div class="clock-time" id="clockTime">--:--</div>
+            <div class="clock-date" id="clockDate">--</div>
+        </div>
+    </div>
+
+    <script>
+        // Clock
+        function updateClock() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var timeStr = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+            document.getElementById('clockTime').textContent = timeStr;
+
+            var days = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
+            var months = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'desember'];
+            var dateStr = days[now.getDay()] + ' ' + now.getDate() + '. ' + months[now.getMonth()];
+            document.getElementById('clockDate').textContent = dateStr;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // RSS News
+        function fetchNews() {
+            var rssUrl = 'https://www.nrk.no/nyheter/siste.rss';
+            var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', proxyUrl, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var parser = new DOMParser();
+                    var xml = parser.parseFromString(xhr.responseText, 'text/xml');
+                    var items = xml.querySelectorAll('item');
+                    var headlines = [];
+
+                    for (var i = 0; i < Math.min(items.length, 15); i++) {
+                        var title = items[i].querySelector('title');
+                        if (title) {
+                            headlines.push(title.textContent);
+                        }
+                    }
+
+                    if (headlines.length > 0) {
+                        renderNews(headlines);
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function renderNews(headlines) {
+            var newsScroll = document.getElementById('newsScroll');
+            var html = '';
+
+            // Duplicate for seamless loop
+            for (var i = 0; i < 2; i++) {
+                for (var j = 0; j < headlines.length; j++) {
+                    html += '<span class="news-item">' + headlines[j] + '</span>';
+                }
+            }
+
+            newsScroll.innerHTML = html;
+
+            // Adjust animation duration based on content length
+            var totalWidth = newsScroll.scrollWidth / 2;
+            var duration = totalWidth / 80; // pixels per second
+            newsScroll.style.animationDuration = duration + 's';
+        }
+
+        fetchNews();
+        setInterval(fetchNews, 300000); // Refresh every 5 minutes
+    </script>
+</body>
+</html>
