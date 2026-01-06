@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080">
+    <title>Værvarsel Lier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: #0a0a0a;
+            width: 1080px;
+            height: 100px;
+            overflow: hidden;
+        }
+        
+        .weather-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+            padding: 4px;
+            gap: 4px;
+        }
+        
+        .location-card {
+            flex: 1;
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 6px 8px;
+            gap: 8px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+            min-width: 0;
+        }
+        
+        .current-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 85px;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 8px;
+        }
+        
+        .location-name {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .current-main {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .weather-icon {
+            font-size: 26px;
+            line-height: 1;
+        }
+        
+        .current-temp {
+            font-size: 22px;
+            font-weight: 300;
+            color: #fff;
+            line-height: 1;
+        }
+        
+        .current-temp .unit {
+            font-size: 12px;
+            opacity: 0.5;
+        }
+        
+        .current-detail {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 3px;
+        }
+        
+        .forecast-section {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 0;
+            overflow: hidden;
+        }
+        
+        .forecast-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 2px;
+            min-width: 0;
+            flex: 1;
+        }
+        
+        .forecast-time {
+            font-size: 8px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 2px;
+        }
+        
+        .forecast-icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+            line-height: 1;
+        }
+        
+        .forecast-temp {
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+        }
+        
+        .forecast-precip {
+            font-size: 7px;
+            color: #5dade2;
+            min-height: 10px;
+            font-weight: 500;
+        }
+        
+        /* Temperature colors */
+        .temp-freezing { color: #85c1e9; }
+        .temp-cold { color: #aed6f1; }
+        .temp-cool { color: #d5dbdb; }
+        .temp-mild { color: #f9e79f; }
+        .temp-warm { color: #f5b041; }
+        .temp-hot { color: #e74c3c; }
+        
+        .loading {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+        }
+        
+        .error-state .location-name {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .error-msg {
+            color: #e74c3c;
+            font-size: 9px;
+        }
+        
+        .attribution {
+            position: absolute;
+            bottom: 3px;
+            right: 6px;
+            font-size: 7px;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container" id="weatherContainer">
+        <div class="location-card" data-location="lierbyen">
+            <div class="loading">Laster værdata...</div>
+        </div>
+        <div class="location-card" data-location="lierstranda">
+            <div class="loading">Laster værdata...</div>
+        </div>
+        <div class="location-card" data-location="tranby">
+            <div class="loading">Laster værdata...</div>
+        </div>
+        <div class="location-card" data-location="sylling">
+            <div class="loading">Laster værdata...</div>
+        </div>
+    </div>
+    
+    <script>
+        const locations = {
+            lierbyen: { name: 'Lierbyen', lat: 59.7925, lon: 10.2425 },
+            lierstranda: { name: 'Lierstranda', lat: 59.7566, lon: 10.2583 },
+            tranby: { name: 'Tranby', lat: 59.8089, lon: 10.3056 },
+            sylling: { name: 'Sylling', lat: 59.8633, lon: 10.1850 }
+        };
+        
+        const corsProxy = 'https://corsproxy.io/?';
+        
+        // Weather symbol to emoji mapping
+        const weatherEmoji = {
+            'clearsky_day': '☀️',
+            'clearsky_night': '🌙',
+            'clearsky_polartwilight': '🌅',
+            'fair_day': '🌤️',
+            'fair_night': '🌙',
+            'fair_polartwilight': '🌤️',
+            'partlycloudy_day': '⛅',
+            'partlycloudy_night': '☁️',
+            'partlycloudy_polartwilight': '⛅',
+            'cloudy': '☁️',
+            'rainshowers_day': '🌦️',
+            'rainshowers_night': '🌧️',
+            'rainshowers_polartwilight': '🌦️',
+            'rainshowersandthunder_day': '⛈️',
+            'rainshowersandthunder_night': '⛈️',
+            'rainshowersandthunder_polartwilight': '⛈️',
+            'sleetshowers_day': '🌨️',
+            'sleetshowers_night': '🌨️',
+            'sleetshowers_polartwilight': '🌨️',
+            'snowshowers_day': '🌨️',
+            'snowshowers_night': '🌨️',
+            'snowshowers_polartwilight': '🌨️',
+            'rain': '🌧️',
+            'heavyrain': '🌧️',
+            'heavyrainandthunder': '⛈️',
+            'sleet': '🌨️',
+            'snow': '❄️',
+            'snowandthunder': '⛈️',
+            'fog': '🌫️',
+            'sleetshowersandthunder_day': '⛈️',
+            'sleetshowersandthunder_night': '⛈️',
+            'snowshowersandthunder_day': '⛈️',
+            'snowshowersandthunder_night': '⛈️',
+            'rainandthunder': '⛈️',
+            'sleetandthunder': '⛈️',
+            'lightrainshowersandthunder_day': '⛈️',
+            'lightrainshowersandthunder_night': '⛈️',
+            'heavyrainshowersandthunder_day': '⛈️',
+            'heavyrainshowersandthunder_night': '⛈️',
+            'lightrainshowers_day': '🌦️',
+            'lightrainshowers_night': '🌧️',
+            'heavyrainshowers_day': '🌧️',
+            'heavyrainshowers_night': '🌧️',
+            'lightsleetshowers_day': '🌨️',
+            'lightsleetshowers_night': '🌨️',
+            'heavysleetshowers_day': '🌨️',
+            'heavysleetshowers_night': '🌨️',
+            'lightsnowshowers_day': '🌨️',
+            'lightsnowshowers_night': '🌨️',
+            'heavysnowshowers_day': '❄️',
+            'heavysnowshowers_night': '❄️',
+            'lightrain': '🌧️',
+            'lightsleet': '🌨️',
+            'heavysleet': '🌨️',
+            'lightsnow': '🌨️',
+            'heavysnow': '❄️',
+            'lightrainandthunder': '⛈️',
+            'lightsleetandthunder': '⛈️',
+            'heavysleetandthunder': '⛈️',
+            'lightsnowandthunder': '⛈️',
+            'heavysnowandthunder': '⛈️'
+        };
+        
+        function getWeatherEmoji(symbolCode) {
+            // Remove any trailing _day/_night if not in map
+            if (weatherEmoji[symbolCode]) {
+                return weatherEmoji[symbolCode];
+            }
+            // Try base name
+            const baseName = symbolCode.replace(/_day|_night|_polartwilight/g, '');
+            if (weatherEmoji[baseName]) {
+                return weatherEmoji[baseName];
+            }
+            // Default
+            return '🌡️';
+        }
+        
+        function getWindArrow(degrees) {
+            const arrows = ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'];
+            return arrows[Math.round(degrees / 45) % 8];
+        }
+        
+        function getTempClass(temp) {
+            if (temp < -5) return 'temp-freezing';
+            if (temp < 3) return 'temp-cold';
+            if (temp < 10) return 'temp-cool';
+            if (temp < 17) return 'temp-mild';
+            if (temp < 24) return 'temp-warm';
+            return 'temp-hot';
+        }
+        
+        function formatHour(isoString) {
+            const date = new Date(isoString);
+            return date.getHours().toString().padStart(2, '0');
+        }
+        
+        async function fetchWeather(locationKey) {
+            const loc = locations[locationKey];
+            const apiUrl = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${loc.lat}&lon=${loc.lon}`;
+            const proxyUrl = corsProxy + encodeURIComponent(apiUrl);
+            
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error(`Feil for ${loc.name}:`, error);
+                return null;
+            }
+        }
+        
+        function renderWeatherCard(locationKey, data) {
+            const card = document.querySelector(`[data-location="${locationKey}"]`);
+            const loc = locations[locationKey];
+            
+            if (!data) {
+                card.innerHTML = `
+                    <div class="current-section error-state">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="error-msg">Ingen data tilgjengelig</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                const timeseries = data.properties.timeseries;
+                
+                // Current weather
+                const current = timeseries[0];
+                const currentInstant = current.data.instant.details;
+                const currentNext1h = current.data.next_1_hours;
+                
+                const currentTemp = Math.round(currentInstant.air_temperature);
+                const windSpeed = currentInstant.wind_speed.toFixed(1);
+                const windDir = currentInstant.wind_from_direction;
+                const currentSymbol = currentNext1h?.summary?.symbol_code || 'fair_day';
+                
+                // Forecast: +2h, +4h, +6h, +8h
+                const now = new Date();
+                const forecastHours = [2, 4, 6, 8];
+                const forecasts = [];
+                
+                for (const hoursAhead of forecastHours) {
+                    const targetTime = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
+                    
+                    let closest = timeseries[0];
+                    let minDiff = Infinity;
+                    
+                    for (const ts of timeseries) {
+                        const tsTime = new Date(ts.time);
+                        const diff = Math.abs(tsTime - targetTime);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            closest = ts;
+                        }
+                    }
+                    
+                    const instant = closest.data.instant.details;
+                    const next1h = closest.data.next_1_hours || closest.data.next_6_hours;
+                    
+                    forecasts.push({
+                        time: closest.time,
+                        temp: Math.round(instant.air_temperature),
+                        symbol: next1h?.summary?.symbol_code || 'fair_day',
+                        precip: next1h?.details?.precipitation_amount || 0
+                    });
+                }
+                
+                const forecastHTML = forecasts.map(f => `
+                    <div class="forecast-item">
+                        <span class="forecast-time">${formatHour(f.time)}</span>
+                        <span class="forecast-icon">${getWeatherEmoji(f.symbol)}</span>
+                        <span class="forecast-temp ${getTempClass(f.temp)}">${f.temp}°</span>
+                        <span class="forecast-precip">${f.precip > 0.1 ? f.precip.toFixed(1) + 'mm' : ''}</span>
+                    </div>
+                `).join('');
+                
+                card.innerHTML = `
+                    <div class="current-section">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="current-main">
+                            <span class="weather-icon">${getWeatherEmoji(currentSymbol)}</span>
+                            <span class="current-temp ${getTempClass(currentTemp)}">${currentTemp}<span class="unit">°</span></span>
+                        </div>
+                        <div class="current-detail">${getWindArrow(windDir)} ${windSpeed} m/s</div>
+                    </div>
+                    <div class="forecast-section">
+                        ${forecastHTML}
+                    </div>
+                    <span class="attribution">yr.no</span>
+                `;
+            } catch (error) {
+                console.error('Parse error:', error);
+                card.innerHTML = `
+                    <div class="current-section error-state">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="error-msg">Datafeil</div>
+                    </div>
+                `;
+            }
+        }
+        
+        async function initWeather() {
+            const keys = Object.keys(locations);
+            const results = await Promise.all(keys.map(k => fetchWeather(k)));
+            keys.forEach((k, i) => renderWeatherCard(k, results[i]));
+        }
+        
+        initWeather();
+        setInterval(initWeather, 10 * 60 * 1000);
+    </script>
+</body>
+</html>
