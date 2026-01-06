@@ -67,13 +67,18 @@
         .current-main {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         
         .weather-icon {
-            font-size: 20px;
-            line-height: 1;
-            color: #ffd700;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+        
+        .weather-icon svg {
+            width: 100%;
+            height: 100%;
         }
         
         .current-temp {
@@ -120,10 +125,14 @@
         }
         
         .forecast-icon {
-            font-size: 14px;
+            width: 22px;
+            height: 22px;
             margin-bottom: 2px;
-            line-height: 1;
-            color: #ffd700;
+        }
+        
+        .forecast-icon svg {
+            width: 100%;
+            height: 100%;
         }
         
         .forecast-temp {
@@ -156,10 +165,6 @@
             font-size: 11px;
         }
         
-        .error-state .location-name {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
         .error-msg {
             color: #e74c3c;
             font-size: 9px;
@@ -173,14 +178,6 @@
             color: rgba(255, 255, 255, 0.15);
             letter-spacing: 0.5px;
         }
-        
-        /* Weather icon colors */
-        .icon-sun { color: #ffd700; }
-        .icon-cloud { color: #b0b0b0; }
-        .icon-rain { color: #5dade2; }
-        .icon-snow { color: #ffffff; }
-        .icon-thunder { color: #f39c12; }
-        .icon-fog { color: #95a5a6; }
     </style>
 </head>
 <body>
@@ -199,6 +196,125 @@
         </div>
     </div>
     
+    <!-- SVG Icon Templates (hidden) -->
+    <div id="svg-templates" style="display:none;">
+        <!-- Sun -->
+        <svg id="icon-sun" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="20" fill="#FFD700"/>
+            <g stroke="#FFD700" stroke-width="4" stroke-linecap="round">
+                <line x1="50" y1="5" x2="50" y2="20"/>
+                <line x1="50" y1="80" x2="50" y2="95"/>
+                <line x1="5" y1="50" x2="20" y2="50"/>
+                <line x1="80" y1="50" x2="95" y2="50"/>
+                <line x1="18" y1="18" x2="28" y2="28"/>
+                <line x1="72" y1="72" x2="82" y2="82"/>
+                <line x1="18" y1="82" x2="28" y2="72"/>
+                <line x1="72" y1="28" x2="82" y2="18"/>
+            </g>
+        </svg>
+        
+        <!-- Moon -->
+        <svg id="icon-moon" viewBox="0 0 100 100">
+            <path d="M50 15 A35 35 0 1 0 50 85 A25 25 0 1 1 50 15" fill="#E8E8E8"/>
+        </svg>
+        
+        <!-- Cloud -->
+        <svg id="icon-cloud" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="60" rx="25" ry="18" fill="#B0B0B0"/>
+            <ellipse cx="60" cy="55" rx="30" ry="22" fill="#C0C0C0"/>
+            <ellipse cx="50" cy="65" rx="35" ry="18" fill="#D0D0D0"/>
+        </svg>
+        
+        <!-- Partly Cloudy Day -->
+        <svg id="icon-partlycloudy" viewBox="0 0 100 100">
+            <circle cx="35" cy="35" r="18" fill="#FFD700"/>
+            <g stroke="#FFD700" stroke-width="3" stroke-linecap="round">
+                <line x1="35" y1="5" x2="35" y2="12"/>
+                <line x1="35" y1="58" x2="35" y2="65"/>
+                <line x1="5" y1="35" x2="12" y2="35"/>
+                <line x1="58" y1="35" x2="65" y2="35"/>
+                <line x1="14" y1="14" x2="19" y2="19"/>
+                <line x1="51" y1="51" x2="56" y2="56"/>
+                <line x1="14" y1="56" x2="19" y2="51"/>
+                <line x1="51" y1="19" x2="56" y2="14"/>
+            </g>
+            <ellipse cx="55" cy="65" rx="22" ry="15" fill="#B0B0B0"/>
+            <ellipse cx="72" cy="62" rx="20" ry="17" fill="#C0C0C0"/>
+            <ellipse cx="65" cy="72" rx="28" ry="14" fill="#D0D0D0"/>
+        </svg>
+        
+        <!-- Rain -->
+        <svg id="icon-rain" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="35" rx="22" ry="16" fill="#708090"/>
+            <ellipse cx="55" cy="32" rx="26" ry="19" fill="#808080"/>
+            <ellipse cx="48" cy="42" rx="32" ry="16" fill="#909090"/>
+            <g stroke="#5DADE2" stroke-width="3" stroke-linecap="round">
+                <line x1="30" y1="58" x2="25" y2="75"/>
+                <line x1="45" y1="60" x2="40" y2="80"/>
+                <line x1="60" y1="58" x2="55" y2="75"/>
+                <line x1="75" y1="55" x2="70" y2="72"/>
+            </g>
+        </svg>
+        
+        <!-- Light Rain -->
+        <svg id="icon-lightrain" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="35" rx="22" ry="16" fill="#808080"/>
+            <ellipse cx="55" cy="32" rx="26" ry="19" fill="#909090"/>
+            <ellipse cx="48" cy="42" rx="32" ry="16" fill="#A0A0A0"/>
+            <g stroke="#5DADE2" stroke-width="3" stroke-linecap="round">
+                <line x1="35" y1="58" x2="32" y2="72"/>
+                <line x1="55" y1="60" x2="52" y2="74"/>
+            </g>
+        </svg>
+        
+        <!-- Snow -->
+        <svg id="icon-snow" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="35" rx="22" ry="16" fill="#A0A0A0"/>
+            <ellipse cx="55" cy="32" rx="26" ry="19" fill="#B0B0B0"/>
+            <ellipse cx="48" cy="42" rx="32" ry="16" fill="#C0C0C0"/>
+            <g fill="#FFFFFF">
+                <circle cx="30" cy="65" r="4"/>
+                <circle cx="50" cy="72" r="4"/>
+                <circle cx="70" cy="65" r="4"/>
+                <circle cx="40" cy="82" r="4"/>
+                <circle cx="60" cy="85" r="4"/>
+            </g>
+        </svg>
+        
+        <!-- Thunder -->
+        <svg id="icon-thunder" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="30" rx="22" ry="16" fill="#505050"/>
+            <ellipse cx="55" cy="27" rx="26" ry="19" fill="#606060"/>
+            <ellipse cx="48" cy="37" rx="32" ry="16" fill="#707070"/>
+            <polygon points="55,40 45,60 52,60 42,85 65,55 55,55 62,40" fill="#FFD700"/>
+        </svg>
+        
+        <!-- Fog -->
+        <svg id="icon-fog" viewBox="0 0 100 100">
+            <g stroke="#A0A0A0" stroke-width="6" stroke-linecap="round">
+                <line x1="15" y1="35" x2="85" y2="35"/>
+                <line x1="20" y1="50" x2="80" y2="50"/>
+                <line x1="15" y1="65" x2="85" y2="65"/>
+                <line x1="25" y1="80" x2="75" y2="80"/>
+            </g>
+        </svg>
+        
+        <!-- Sleet -->
+        <svg id="icon-sleet" viewBox="0 0 100 100">
+            <ellipse cx="35" cy="35" rx="22" ry="16" fill="#708090"/>
+            <ellipse cx="55" cy="32" rx="26" ry="19" fill="#808080"/>
+            <ellipse cx="48" cy="42" rx="32" ry="16" fill="#909090"/>
+            <g stroke="#5DADE2" stroke-width="3" stroke-linecap="round">
+                <line x1="30" y1="58" x2="27" y2="70"/>
+                <line x1="55" y1="58" x2="52" y2="70"/>
+            </g>
+            <g fill="#FFFFFF">
+                <circle cx="42" cy="78" r="3"/>
+                <circle cx="68" cy="75" r="3"/>
+            </g>
+        </svg>
+    </div>
+    
     <script>
         var locations = {
             lierbyen: { name: 'LIERBYEN', lat: 59.7925, lon: 10.2425 },
@@ -209,46 +325,33 @@
         
         var workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
         
-        // Simple text-based weather icons (ASCII safe)
-        var weatherIcons = {
-            'clearsky': { icon: '*', css: 'icon-sun' },
-            'fair': { icon: '~*', css: 'icon-sun' },
-            'partlycloudy': { icon: '~', css: 'icon-cloud' },
-            'cloudy': { icon: '~~', css: 'icon-cloud' },
-            'rain': { icon: ',,', css: 'icon-rain' },
-            'lightrain': { icon: ',', css: 'icon-rain' },
-            'heavyrain': { icon: ',,,', css: 'icon-rain' },
-            'rainshowers': { icon: '~,', css: 'icon-rain' },
-            'lightrainshowers': { icon: '~,', css: 'icon-rain' },
-            'heavyrainshowers': { icon: '~,,', css: 'icon-rain' },
-            'sleet': { icon: ',*', css: 'icon-rain' },
-            'sleetshowers': { icon: '~,*', css: 'icon-rain' },
-            'snow': { icon: '**', css: 'icon-snow' },
-            'lightsnow': { icon: '*', css: 'icon-snow' },
-            'heavysnow': { icon: '***', css: 'icon-snow' },
-            'snowshowers': { icon: '~*', css: 'icon-snow' },
-            'lightsnowshowers': { icon: '~*', css: 'icon-snow' },
-            'heavysnowshowers': { icon: '~**', css: 'icon-snow' },
-            'fog': { icon: '=', css: 'icon-fog' },
-            'thunder': { icon: '!', css: 'icon-thunder' }
-        };
-        
-        function getWeatherIcon(symbolCode) {
+        function getIconSvg(symbolCode) {
             var baseName = symbolCode.replace(/_day|_night|_polartwilight/g, '');
+            var isNight = symbolCode.indexOf('_night') !== -1;
+            var iconId = 'icon-cloud';
             
-            // Check for thunder
             if (baseName.indexOf('thunder') !== -1) {
-                return weatherIcons['thunder'];
+                iconId = 'icon-thunder';
+            } else if (baseName.indexOf('fog') !== -1) {
+                iconId = 'icon-fog';
+            } else if (baseName.indexOf('snow') !== -1) {
+                iconId = 'icon-snow';
+            } else if (baseName.indexOf('sleet') !== -1) {
+                iconId = 'icon-sleet';
+            } else if (baseName.indexOf('heavyrain') !== -1 || baseName === 'rain') {
+                iconId = 'icon-rain';
+            } else if (baseName.indexOf('rain') !== -1) {
+                iconId = 'icon-lightrain';
+            } else if (baseName.indexOf('cloudy') !== -1) {
+                iconId = 'icon-cloud';
+            } else if (baseName.indexOf('partlycloudy') !== -1 || baseName.indexOf('fair') !== -1) {
+                iconId = 'icon-partlycloudy';
+            } else if (baseName.indexOf('clearsky') !== -1) {
+                iconId = isNight ? 'icon-moon' : 'icon-sun';
             }
             
-            // Find matching icon
-            for (var key in weatherIcons) {
-                if (baseName.indexOf(key) !== -1) {
-                    return weatherIcons[key];
-                }
-            }
-            
-            return { icon: '?', css: 'icon-cloud' };
+            var template = document.getElementById(iconId);
+            return template ? template.outerHTML : '';
         }
         
         function getWindArrow(degrees) {
@@ -299,7 +402,7 @@
             var loc = locations[locationKey];
             
             if (!data) {
-                card.innerHTML = '<div class="current-section error-state">' +
+                card.innerHTML = '<div class="current-section">' +
                     '<div class="location-name">' + loc.name + '</div>' +
                     '<div class="error-msg">No data</div>' +
                     '</div>';
@@ -316,9 +419,7 @@
                 var windSpeed = currentInstant.wind_speed.toFixed(1);
                 var windDir = currentInstant.wind_from_direction;
                 var currentSymbol = (currentNext1h && currentNext1h.summary) ? currentNext1h.summary.symbol_code : 'fair_day';
-                var currentIcon = getWeatherIcon(currentSymbol);
                 
-                // Forecast
                 var now = new Date();
                 var forecastHours = [2, 4, 6, 8];
                 var forecastHTML = '';
@@ -344,12 +445,11 @@
                     var next1h = closest.data.next_1_hours || closest.data.next_6_hours;
                     var fTemp = Math.round(instant.air_temperature);
                     var fSymbol = (next1h && next1h.summary) ? next1h.summary.symbol_code : 'fair_day';
-                    var fIcon = getWeatherIcon(fSymbol);
                     var fPrecip = (next1h && next1h.details) ? next1h.details.precipitation_amount : 0;
                     
                     forecastHTML += '<div class="forecast-item">' +
                         '<span class="forecast-time">' + formatHour(closest.time) + '</span>' +
-                        '<span class="forecast-icon ' + fIcon.css + '">' + fIcon.icon + '</span>' +
+                        '<span class="forecast-icon">' + getIconSvg(fSymbol) + '</span>' +
                         '<span class="forecast-temp ' + getTempClass(fTemp) + '">' + fTemp + 'C</span>' +
                         '<span class="forecast-precip">' + (fPrecip > 0.1 ? fPrecip.toFixed(1) + 'mm' : '') + '</span>' +
                         '</div>';
@@ -358,7 +458,7 @@
                 card.innerHTML = '<div class="current-section">' +
                     '<div class="location-name">' + loc.name + '</div>' +
                     '<div class="current-main">' +
-                        '<span class="weather-icon ' + currentIcon.css + '">' + currentIcon.icon + '</span>' +
+                        '<span class="weather-icon">' + getIconSvg(currentSymbol) + '</span>' +
                         '<span class="current-temp ' + getTempClass(currentTemp) + '">' + currentTemp + '<span class="unit">C</span></span>' +
                     '</div>' +
                     '<div class="current-detail">' + getWindArrow(windDir) + ' ' + windSpeed + ' m/s</div>' +
@@ -367,7 +467,7 @@
                     '<span class="attribution">yr.no</span>';
                     
             } catch (error) {
-                card.innerHTML = '<div class="current-section error-state">' +
+                card.innerHTML = '<div class="current-section">' +
                     '<div class="location-name">' + loc.name + '</div>' +
                     '<div class="error-msg">Error</div>' +
                     '</div>';
