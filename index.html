@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1080">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vær Lier</title>
     <style>
         * {
@@ -24,69 +24,60 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
-            padding: 8px;
-            gap: 8px;
+            padding: 6px;
+            gap: 6px;
         }
 
         .logo-section {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 70px;
+            width: 50px;
             flex-shrink: 0;
         }
 
         .logo-section svg {
-            width: 50px;
+            width: 38px;
             height: auto;
-            opacity: 0.85;
+            opacity: 0.8;
         }
 
         .location-card {
             flex: 1;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 12px 14px;
-            gap: 12px;
+            border-radius: 8px;
+            padding: 8px 10px;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.06);
             overflow: hidden;
             min-width: 0;
         }
 
-        .current-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            width: 130px;
-            flex-shrink: 0;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 12px;
-        }
-
         .location-name {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 700;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            text-align: center;
         }
 
-        .current-main {
+        .current-section {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .weather-icon {
-            width: 56px;
-            height: 56px;
+            width: 42px;
+            height: 42px;
             flex-shrink: 0;
         }
 
@@ -95,29 +86,33 @@
             height: 100%;
         }
 
+        .current-info {
+            display: flex;
+            flex-direction: column;
+        }
+
         .current-temp {
-            font-size: 38px;
+            font-size: 28px;
             font-weight: 300;
             color: #fff;
             line-height: 1;
         }
 
         .current-temp .unit {
-            font-size: 20px;
+            font-size: 14px;
             opacity: 0.5;
         }
 
         .current-detail {
-            font-size: 14px;
+            font-size: 10px;
             color: rgba(255, 255, 255, 0.4);
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .forecast-section {
             display: flex;
+            justify-content: space-between;
             flex: 1;
-            justify-content: space-around;
-            align-items: center;
             min-width: 0;
         }
 
@@ -125,20 +120,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 4px;
+            flex: 1;
         }
 
         .forecast-time {
-            font-size: 14px;
+            font-size: 9px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.4);
-            margin-bottom: 4px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 2px;
         }
 
         .forecast-icon {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 4px;
+            width: 26px;
+            height: 26px;
+            margin-bottom: 2px;
         }
 
         .forecast-icon img {
@@ -147,15 +142,15 @@
         }
 
         .forecast-temp {
-            font-size: 20px;
+            font-size: 13px;
             font-weight: 500;
             color: #fff;
         }
 
         .forecast-precip {
-            font-size: 12px;
+            font-size: 8px;
             color: #5dade2;
-            min-height: 16px;
+            min-height: 12px;
             font-weight: 500;
         }
 
@@ -168,24 +163,26 @@
 
         .loading {
             width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: rgba(255, 255, 255, 0.3);
-            font-size: 18px;
+            font-size: 12px;
         }
 
         .error-msg {
             color: #e74c3c;
-            font-size: 16px;
+            font-size: 11px;
+            text-align: center;
         }
 
         .attribution {
             position: absolute;
-            bottom: 4px;
-            right: 10px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.15);
+            bottom: 2px;
+            right: 6px;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.12);
         }
     </style>
 </head>
@@ -217,110 +214,52 @@
 
     <script>
         var locations = {
-            lierbyen: { name: 'LIERBYEN', lat: 59.7925, lon: 10.2425 },
-            lierstranda: { name: 'LIERSTRANDA', lat: 59.7566, lon: 10.2583 },
-            tranby: { name: 'TRANBY', lat: 59.8089, lon: 10.3056 },
-            sylling: { name: 'SYLLING', lat: 59.8633, lon: 10.1850 }
+            lierbyen: { name: 'Lierbyen', lat: 59.7925, lon: 10.2425 },
+            lierstranda: { name: 'Lierstranda', lat: 59.7566, lon: 10.2583 },
+            tranby: { name: 'Tranby', lat: 59.8089, lon: 10.3056 },
+            sylling: { name: 'Sylling', lat: 59.8633, lon: 10.1850 }
         };
 
         var workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
         var iconBaseUrl = 'https://nrkno.github.io/yr-weather-symbols/symbols/darkmode/';
 
-        // Mapping from YR API symbol_code to NRK icon ID
         var symbolToId = {
-            'clearsky_day': '01d',
-            'clearsky_night': '01n',
-            'clearsky_polartwilight': '01m',
-            'fair_day': '02d',
-            'fair_night': '02n',
-            'fair_polartwilight': '02m',
-            'partlycloudy_day': '03d',
-            'partlycloudy_night': '03n',
-            'partlycloudy_polartwilight': '03m',
+            'clearsky_day': '01d', 'clearsky_night': '01n', 'clearsky_polartwilight': '01m',
+            'fair_day': '02d', 'fair_night': '02n', 'fair_polartwilight': '02m',
+            'partlycloudy_day': '03d', 'partlycloudy_night': '03n', 'partlycloudy_polartwilight': '03m',
             'cloudy': '04',
-            'rainshowers_day': '05d',
-            'rainshowers_night': '05n',
-            'rainshowers_polartwilight': '05m',
-            'rainshowersandthunder_day': '06d',
-            'rainshowersandthunder_night': '06n',
-            'rainshowersandthunder_polartwilight': '06m',
-            'sleetshowers_day': '07d',
-            'sleetshowers_night': '07n',
-            'sleetshowers_polartwilight': '07m',
-            'snowshowers_day': '08d',
-            'snowshowers_night': '08n',
-            'snowshowers_polartwilight': '08m',
-            'rain': '09',
-            'heavyrain': '10',
-            'heavyrainandthunder': '11',
-            'sleet': '12',
-            'snow': '13',
-            'snowandthunder': '14',
-            'fog': '15',
-            'sleetshowersandthunder_day': '20d',
-            'sleetshowersandthunder_night': '20n',
-            'sleetshowersandthunder_polartwilight': '20m',
-            'snowshowersandthunder_day': '21d',
-            'snowshowersandthunder_night': '21n',
-            'snowshowersandthunder_polartwilight': '21m',
-            'rainandthunder': '22',
-            'sleetandthunder': '23',
-            'lightrainshowersandthunder_day': '24d',
-            'lightrainshowersandthunder_night': '24n',
-            'lightrainshowersandthunder_polartwilight': '24m',
-            'heavyrainshowersandthunder_day': '25d',
-            'heavyrainshowersandthunder_night': '25n',
-            'heavyrainshowersandthunder_polartwilight': '25m',
-            'lightssleetshowersandthunder_day': '26d',
-            'lightssleetshowersandthunder_night': '26n',
-            'lightssleetshowersandthunder_polartwilight': '26m',
-            'heavysleetshowersandthunder_day': '27d',
-            'heavysleetshowersandthunder_night': '27n',
-            'heavysleetshowersandthunder_polartwilight': '27m',
-            'lightssnowshowersandthunder_day': '28d',
-            'lightssnowshowersandthunder_night': '28n',
-            'lightssnowshowersandthunder_polartwilight': '28m',
-            'heavysnowshowersandthunder_day': '29d',
-            'heavysnowshowersandthunder_night': '29n',
-            'heavysnowshowersandthunder_polartwilight': '29m',
-            'lightrainandthunder': '30',
-            'lightsleetandthunder': '31',
-            'heavysleetandthunder': '32',
-            'lightsnowandthunder': '33',
-            'heavysnowandthunder': '34',
-            'lightrainshowers_day': '40d',
-            'lightrainshowers_night': '40n',
-            'lightrainshowers_polartwilight': '40m',
-            'heavyrainshowers_day': '41d',
-            'heavyrainshowers_night': '41n',
-            'heavyrainshowers_polartwilight': '41m',
-            'lightsleetshowers_day': '42d',
-            'lightsleetshowers_night': '42n',
-            'lightsleetshowers_polartwilight': '42m',
-            'heavysleetshowers_day': '43d',
-            'heavysleetshowers_night': '43n',
-            'heavysleetshowers_polartwilight': '43m',
-            'lightsnowshowers_day': '44d',
-            'lightsnowshowers_night': '44n',
-            'lightsnowshowers_polartwilight': '44m',
-            'heavysnowshowers_day': '45d',
-            'heavysnowshowers_night': '45n',
-            'heavysnowshowers_polartwilight': '45m',
-            'lightrain': '46',
-            'lightsleet': '47',
-            'heavysleet': '48',
-            'lightsnow': '49',
-            'heavysnow': '50'
+            'rainshowers_day': '05d', 'rainshowers_night': '05n', 'rainshowers_polartwilight': '05m',
+            'rainshowersandthunder_day': '06d', 'rainshowersandthunder_night': '06n', 'rainshowersandthunder_polartwilight': '06m',
+            'sleetshowers_day': '07d', 'sleetshowers_night': '07n', 'sleetshowers_polartwilight': '07m',
+            'snowshowers_day': '08d', 'snowshowers_night': '08n', 'snowshowers_polartwilight': '08m',
+            'rain': '09', 'heavyrain': '10', 'heavyrainandthunder': '11',
+            'sleet': '12', 'snow': '13', 'snowandthunder': '14', 'fog': '15',
+            'sleetshowersandthunder_day': '20d', 'sleetshowersandthunder_night': '20n', 'sleetshowersandthunder_polartwilight': '20m',
+            'snowshowersandthunder_day': '21d', 'snowshowersandthunder_night': '21n', 'snowshowersandthunder_polartwilight': '21m',
+            'rainandthunder': '22', 'sleetandthunder': '23',
+            'lightrainshowersandthunder_day': '24d', 'lightrainshowersandthunder_night': '24n', 'lightrainshowersandthunder_polartwilight': '24m',
+            'heavyrainshowersandthunder_day': '25d', 'heavyrainshowersandthunder_night': '25n', 'heavyrainshowersandthunder_polartwilight': '25m',
+            'lightssleetshowersandthunder_day': '26d', 'lightssleetshowersandthunder_night': '26n', 'lightssleetshowersandthunder_polartwilight': '26m',
+            'heavysleetshowersandthunder_day': '27d', 'heavysleetshowersandthunder_night': '27n', 'heavysleetshowersandthunder_polartwilight': '27m',
+            'lightssnowshowersandthunder_day': '28d', 'lightssnowshowersandthunder_night': '28n', 'lightssnowshowersandthunder_polartwilight': '28m',
+            'heavysnowshowersandthunder_day': '29d', 'heavysnowshowersandthunder_night': '29n', 'heavysnowshowersandthunder_polartwilight': '29m',
+            'lightrainandthunder': '30', 'lightsleetandthunder': '31', 'heavysleetandthunder': '32',
+            'lightsnowandthunder': '33', 'heavysnowandthunder': '34',
+            'lightrainshowers_day': '40d', 'lightrainshowers_night': '40n', 'lightrainshowers_polartwilight': '40m',
+            'heavyrainshowers_day': '41d', 'heavyrainshowers_night': '41n', 'heavyrainshowers_polartwilight': '41m',
+            'lightsleetshowers_day': '42d', 'lightsleetshowers_night': '42n', 'lightsleetshowers_polartwilight': '42m',
+            'heavysleetshowers_day': '43d', 'heavysleetshowers_night': '43n', 'heavysleetshowers_polartwilight': '43m',
+            'lightsnowshowers_day': '44d', 'lightsnowshowers_night': '44n', 'lightsnowshowers_polartwilight': '44m',
+            'heavysnowshowers_day': '45d', 'heavysnowshowers_night': '45n', 'heavysnowshowers_polartwilight': '45m',
+            'lightrain': '46', 'lightsleet': '47', 'heavysleet': '48', 'lightsnow': '49', 'heavysnow': '50'
         };
 
         function getIconUrl(symbolCode) {
-            var iconId = symbolToId[symbolCode] || '04';
-            return iconBaseUrl + iconId + '.svg';
+            return iconBaseUrl + (symbolToId[symbolCode] || '04') + '.svg';
         }
 
         function getWindArrow(degrees) {
-            var arrows = ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'];
-            return arrows[Math.round(degrees / 45) % 8];
+            return ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'][Math.round(degrees / 45) % 8];
         }
 
         function getTempClass(temp) {
@@ -333,30 +272,20 @@
         }
 
         function formatTime(isoString) {
-            var date = new Date(isoString);
-            var h = date.getHours();
-            var m = date.getMinutes();
-            return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+            var d = new Date(isoString);
+            return (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
         }
 
         function fetchWeather(locationKey, callback) {
             var loc = locations[locationKey];
-            var url = workerUrl + '?lat=' + loc.lat + '&lon=' + loc.lon;
-
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
+            xhr.open('GET', workerUrl + '?lat=' + loc.lat + '&lon=' + loc.lon, true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            callback(null, data);
-                        } catch (e) {
-                            callback(e, null);
-                        }
-                    } else {
-                        callback(new Error('HTTP ' + xhr.status), null);
-                    }
+                        try { callback(null, JSON.parse(xhr.responseText)); }
+                        catch (e) { callback(e, null); }
+                    } else { callback(new Error('HTTP ' + xhr.status), null); }
                 }
             };
             xhr.send();
@@ -367,88 +296,68 @@
             var loc = locations[locationKey];
 
             if (!data) {
-                card.innerHTML = '<div class="current-section">' +
-                    '<div class="location-name">' + loc.name + '</div>' +
-                    '<div class="error-msg">Ingen data</div>' +
-                    '</div>';
+                card.innerHTML = '<div class="location-name">' + loc.name + '</div><div class="error-msg">Ingen data</div>';
                 return;
             }
 
             try {
-                var timeseries = data.properties.timeseries;
-                var current = timeseries[0];
-                var currentInstant = current.data.instant.details;
-                var currentNext1h = current.data.next_1_hours;
+                var ts = data.properties.timeseries;
+                var current = ts[0];
+                var details = current.data.instant.details;
+                var next1h = current.data.next_1_hours;
 
-                var currentTemp = Math.round(currentInstant.air_temperature);
-                var windSpeed = currentInstant.wind_speed.toFixed(1);
-                var windDir = currentInstant.wind_from_direction;
-                var currentSymbol = (currentNext1h && currentNext1h.summary) ? currentNext1h.summary.symbol_code : 'fair_day';
+                var temp = Math.round(details.air_temperature);
+                var wind = details.wind_speed.toFixed(1);
+                var windDir = details.wind_from_direction;
+                var symbol = (next1h && next1h.summary) ? next1h.summary.symbol_code : 'fair_day';
 
                 var now = new Date();
-                var forecastHours = [2, 4, 6, 8];
                 var forecastHTML = '';
+                var hours = [2, 4, 6, 8];
 
-                for (var i = 0; i < forecastHours.length; i++) {
-                    var hoursAhead = forecastHours[i];
-                    var targetTime = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
+                for (var i = 0; i < hours.length; i++) {
+                    var target = new Date(now.getTime() + hours[i] * 3600000);
+                    var closest = ts[0], minDiff = Infinity;
 
-                    var closest = timeseries[0];
-                    var minDiff = Infinity;
-
-                    for (var j = 0; j < timeseries.length; j++) {
-                        var ts = timeseries[j];
-                        var tsTime = new Date(ts.time);
-                        var diff = Math.abs(tsTime - targetTime);
-                        if (diff < minDiff) {
-                            minDiff = diff;
-                            closest = ts;
-                        }
+                    for (var j = 0; j < ts.length; j++) {
+                        var diff = Math.abs(new Date(ts[j].time) - target);
+                        if (diff < minDiff) { minDiff = diff; closest = ts[j]; }
                     }
 
-                    var instant = closest.data.instant.details;
-                    var next1h = closest.data.next_1_hours || closest.data.next_6_hours;
-                    var fTemp = Math.round(instant.air_temperature);
-                    var fSymbol = (next1h && next1h.summary) ? next1h.summary.symbol_code : 'fair_day';
-                    var fPrecip = (next1h && next1h.details) ? next1h.details.precipitation_amount : 0;
+                    var fd = closest.data.instant.details;
+                    var fn = closest.data.next_1_hours || closest.data.next_6_hours;
+                    var fTemp = Math.round(fd.air_temperature);
+                    var fSym = (fn && fn.summary) ? fn.summary.symbol_code : 'fair_day';
+                    var fPrec = (fn && fn.details) ? fn.details.precipitation_amount : 0;
 
                     forecastHTML += '<div class="forecast-item">' +
                         '<span class="forecast-time">' + formatTime(closest.time) + '</span>' +
-                        '<span class="forecast-icon"><img src="' + getIconUrl(fSymbol) + '" alt=""></span>' +
+                        '<span class="forecast-icon"><img src="' + getIconUrl(fSym) + '" alt=""></span>' +
                         '<span class="forecast-temp ' + getTempClass(fTemp) + '">' + fTemp + '°</span>' +
-                        '<span class="forecast-precip">' + (fPrecip > 0.1 ? fPrecip.toFixed(1) + 'mm' : '') + '</span>' +
+                        '<span class="forecast-precip">' + (fPrec > 0.1 ? fPrec.toFixed(1) + 'mm' : '') + '</span>' +
                         '</div>';
                 }
 
-                card.innerHTML = '<div class="current-section">' +
-                    '<div class="location-name">' + loc.name + '</div>' +
-                    '<div class="current-main">' +
-                        '<span class="weather-icon"><img src="' + getIconUrl(currentSymbol) + '" alt=""></span>' +
-                        '<span class="current-temp ' + getTempClass(currentTemp) + '">' + currentTemp + '<span class="unit">°</span></span>' +
-                    '</div>' +
-                    '<div class="current-detail">' + getWindArrow(windDir) + ' ' + windSpeed + ' m/s</div>' +
+                card.innerHTML = '<div class="location-name">' + loc.name + '</div>' +
+                    '<div class="current-section">' +
+                        '<span class="weather-icon"><img src="' + getIconUrl(symbol) + '" alt=""></span>' +
+                        '<div class="current-info">' +
+                            '<span class="current-temp ' + getTempClass(temp) + '">' + temp + '<span class="unit">°</span></span>' +
+                            '<span class="current-detail">' + getWindArrow(windDir) + ' ' + wind + ' m/s</span>' +
+                        '</div>' +
                     '</div>' +
                     '<div class="forecast-section">' + forecastHTML + '</div>' +
                     '<span class="attribution">yr.no</span>';
 
-            } catch (error) {
-                card.innerHTML = '<div class="current-section">' +
-                    '<div class="location-name">' + loc.name + '</div>' +
-                    '<div class="error-msg">Feil</div>' +
-                    '</div>';
+            } catch (e) {
+                card.innerHTML = '<div class="location-name">' + loc.name + '</div><div class="error-msg">Feil</div>';
             }
         }
 
         function initWeather() {
-            var keys = ['lierbyen', 'lierstranda', 'tranby', 'sylling'];
-
-            for (var i = 0; i < keys.length; i++) {
-                (function(key) {
-                    fetchWeather(key, function(err, data) {
-                        renderWeatherCard(key, err ? null : data);
-                    });
-                })(keys[i]);
-            }
+            ['lierbyen', 'lierstranda', 'tranby', 'sylling'].forEach(function(key) {
+                fetchWeather(key, function(err, data) { renderWeatherCard(key, err ? null : data); });
+            });
         }
 
         initWeather();
