@@ -311,43 +311,43 @@
             return (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
         }
 
-        // Calculate sunrise/sunset (simplified algorithm for Lier area)
-        function calculateSunTimes(lat, lon, date) {
-            var radians = Math.PI / 180;
-            var degrees = 180 / Math.PI;
+        // Fetch sunrise/sunset from MET.no API
+        function fetchSunTimes() {
+            var today = new Date();
+            var dateStr = today.getFullYear() + '-' +
+                ((today.getMonth() + 1) < 10 ? '0' : '') + (today.getMonth() + 1) + '-' +
+                (today.getDate() < 10 ? '0' : '') + today.getDate();
 
-            var dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-            var declination = -23.45 * Math.cos(radians * (360 / 365) * (dayOfYear + 10));
+            var sunUrl = 'https://api.met.no/weatherapi/sunrise/3.0/sun?lat=59.79&lon=10.25&date=' + dateStr + '&offset=+01:00';
+            var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sunUrl);
 
-            var latRad = lat * radians;
-            var decRad = declination * radians;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', proxyUrl, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data.properties && data.properties.sunrise && data.properties.sunset) {
+                            var sunrise = new Date(data.properties.sunrise.time);
+                            var sunset = new Date(data.properties.sunset.time);
 
-            var hourAngle = degrees * Math.acos(
-                (Math.sin(-0.833 * radians) - Math.sin(latRad) * Math.sin(decRad)) /
-                (Math.cos(latRad) * Math.cos(decRad))
-            );
-
-            var solarNoon = 12 - (lon / 15) + (date.getTimezoneOffset() / 60);
-            var sunrise = solarNoon - (hourAngle / 15);
-            var sunset = solarNoon + (hourAngle / 15);
-
-            function toTimeString(hours) {
-                var h = Math.floor(hours);
-                var m = Math.round((hours - h) * 60);
-                if (m === 60) { h++; m = 0; }
-                return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-            }
-
-            return {
-                sunrise: toTimeString(sunrise),
-                sunset: toTimeString(sunset)
+                            document.getElementById('sunrise').textContent =
+                                (sunrise.getHours() < 10 ? '0' : '') + sunrise.getHours() + ':' +
+                                (sunrise.getMinutes() < 10 ? '0' : '') + sunrise.getMinutes();
+                            document.getElementById('sunset').textContent =
+                                (sunset.getHours() < 10 ? '0' : '') + sunset.getHours() + ':' +
+                                (sunset.getMinutes() < 10 ? '0' : '') + sunset.getMinutes();
+                        }
+                    } catch (e) {
+                        console.error('Sun times parse error:', e);
+                    }
+                }
             };
+            xhr.send();
         }
 
         function updateSunTimes() {
-            var times = calculateSunTimes(59.79, 10.25, new Date());
-            document.getElementById('sunrise').textContent = times.sunrise;
-            document.getElementById('sunset').textContent = times.sunset;
+            fetchSunTimes();
         }
 
         function fetchWeather(locationKey, callback) {
