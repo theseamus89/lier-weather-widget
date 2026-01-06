@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=1080">
-    <title>Værvarsel Lier</title>
+    <title>Weather Lier</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +13,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
             background: #0a0a0a;
             width: 1080px;
             height: 100px;
@@ -70,8 +71,9 @@
         }
         
         .weather-icon {
-            font-size: 26px;
+            font-size: 20px;
             line-height: 1;
+            color: #ffd700;
         }
         
         .current-temp {
@@ -118,9 +120,10 @@
         }
         
         .forecast-icon {
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 2px;
             line-height: 1;
+            color: #ffd700;
         }
         
         .forecast-temp {
@@ -137,7 +140,6 @@
             font-weight: 500;
         }
         
-        /* Temperature colors */
         .temp-freezing { color: #85c1e9; }
         .temp-cold { color: #aed6f1; }
         .temp-cool { color: #d5dbdb; }
@@ -171,116 +173,86 @@
             color: rgba(255, 255, 255, 0.15);
             letter-spacing: 0.5px;
         }
+        
+        /* Weather icon colors */
+        .icon-sun { color: #ffd700; }
+        .icon-cloud { color: #b0b0b0; }
+        .icon-rain { color: #5dade2; }
+        .icon-snow { color: #ffffff; }
+        .icon-thunder { color: #f39c12; }
+        .icon-fog { color: #95a5a6; }
     </style>
 </head>
 <body>
     <div class="weather-container" id="weatherContainer">
         <div class="location-card" data-location="lierbyen">
-            <div class="loading">Laster værdata...</div>
+            <div class="loading">Loading...</div>
         </div>
         <div class="location-card" data-location="lierstranda">
-            <div class="loading">Laster værdata...</div>
+            <div class="loading">Loading...</div>
         </div>
         <div class="location-card" data-location="tranby">
-            <div class="loading">Laster værdata...</div>
+            <div class="loading">Loading...</div>
         </div>
         <div class="location-card" data-location="sylling">
-            <div class="loading">Laster værdata...</div>
+            <div class="loading">Loading...</div>
         </div>
     </div>
     
     <script>
-        const locations = {
-            lierbyen: { name: 'Lierbyen', lat: 59.7925, lon: 10.2425 },
-            lierstranda: { name: 'Lierstranda', lat: 59.7566, lon: 10.2583 },
-            tranby: { name: 'Tranby', lat: 59.8089, lon: 10.3056 },
-            sylling: { name: 'Sylling', lat: 59.8633, lon: 10.1850 }
+        var locations = {
+            lierbyen: { name: 'LIERBYEN', lat: 59.7925, lon: 10.2425 },
+            lierstranda: { name: 'LIERSTRANDA', lat: 59.7566, lon: 10.2583 },
+            tranby: { name: 'TRANBY', lat: 59.8089, lon: 10.3056 },
+            sylling: { name: 'SYLLING', lat: 59.8633, lon: 10.1850 }
         };
         
-        // Din egen Cloudflare Worker proxy
-        const workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
+        var workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
         
-        // Weather symbol to emoji mapping
-        const weatherEmoji = {
-            'clearsky_day': '☀️',
-            'clearsky_night': '🌙',
-            'clearsky_polartwilight': '🌅',
-            'fair_day': '🌤️',
-            'fair_night': '🌙',
-            'fair_polartwilight': '🌤️',
-            'partlycloudy_day': '⛅',
-            'partlycloudy_night': '☁️',
-            'partlycloudy_polartwilight': '⛅',
-            'cloudy': '☁️',
-            'rainshowers_day': '🌦️',
-            'rainshowers_night': '🌧️',
-            'rainshowers_polartwilight': '🌦️',
-            'rainshowersandthunder_day': '⛈️',
-            'rainshowersandthunder_night': '⛈️',
-            'rainshowersandthunder_polartwilight': '⛈️',
-            'sleetshowers_day': '🌨️',
-            'sleetshowers_night': '🌨️',
-            'sleetshowers_polartwilight': '🌨️',
-            'snowshowers_day': '🌨️',
-            'snowshowers_night': '🌨️',
-            'snowshowers_polartwilight': '🌨️',
-            'rain': '🌧️',
-            'heavyrain': '🌧️',
-            'heavyrainandthunder': '⛈️',
-            'sleet': '🌨️',
-            'snow': '❄️',
-            'snowandthunder': '⛈️',
-            'fog': '🌫️',
-            'sleetshowersandthunder_day': '⛈️',
-            'sleetshowersandthunder_night': '⛈️',
-            'snowshowersandthunder_day': '⛈️',
-            'snowshowersandthunder_night': '⛈️',
-            'rainandthunder': '⛈️',
-            'sleetandthunder': '⛈️',
-            'lightrainshowersandthunder_day': '⛈️',
-            'lightrainshowersandthunder_night': '⛈️',
-            'heavyrainshowersandthunder_day': '⛈️',
-            'heavyrainshowersandthunder_night': '⛈️',
-            'lightrainshowers_day': '🌦️',
-            'lightrainshowers_night': '🌧️',
-            'heavyrainshowers_day': '🌧️',
-            'heavyrainshowers_night': '🌧️',
-            'lightsleetshowers_day': '🌨️',
-            'lightsleetshowers_night': '🌨️',
-            'heavysleetshowers_day': '🌨️',
-            'heavysleetshowers_night': '🌨️',
-            'lightsnowshowers_day': '🌨️',
-            'lightsnowshowers_night': '🌨️',
-            'heavysnowshowers_day': '❄️',
-            'heavysnowshowers_night': '❄️',
-            'lightrain': '🌧️',
-            'lightsleet': '🌨️',
-            'heavysleet': '🌨️',
-            'lightsnow': '🌨️',
-            'heavysnow': '❄️',
-            'lightrainandthunder': '⛈️',
-            'lightsleetandthunder': '⛈️',
-            'heavysleetandthunder': '⛈️',
-            'lightsnowandthunder': '⛈️',
-            'heavysnowandthunder': '⛈️'
+        // Simple text-based weather icons (ASCII safe)
+        var weatherIcons = {
+            'clearsky': { icon: '*', css: 'icon-sun' },
+            'fair': { icon: '~*', css: 'icon-sun' },
+            'partlycloudy': { icon: '~', css: 'icon-cloud' },
+            'cloudy': { icon: '~~', css: 'icon-cloud' },
+            'rain': { icon: ',,', css: 'icon-rain' },
+            'lightrain': { icon: ',', css: 'icon-rain' },
+            'heavyrain': { icon: ',,,', css: 'icon-rain' },
+            'rainshowers': { icon: '~,', css: 'icon-rain' },
+            'lightrainshowers': { icon: '~,', css: 'icon-rain' },
+            'heavyrainshowers': { icon: '~,,', css: 'icon-rain' },
+            'sleet': { icon: ',*', css: 'icon-rain' },
+            'sleetshowers': { icon: '~,*', css: 'icon-rain' },
+            'snow': { icon: '**', css: 'icon-snow' },
+            'lightsnow': { icon: '*', css: 'icon-snow' },
+            'heavysnow': { icon: '***', css: 'icon-snow' },
+            'snowshowers': { icon: '~*', css: 'icon-snow' },
+            'lightsnowshowers': { icon: '~*', css: 'icon-snow' },
+            'heavysnowshowers': { icon: '~**', css: 'icon-snow' },
+            'fog': { icon: '=', css: 'icon-fog' },
+            'thunder': { icon: '!', css: 'icon-thunder' }
         };
         
-        function getWeatherEmoji(symbolCode) {
-            // Remove any trailing _day/_night if not in map
-            if (weatherEmoji[symbolCode]) {
-                return weatherEmoji[symbolCode];
+        function getWeatherIcon(symbolCode) {
+            var baseName = symbolCode.replace(/_day|_night|_polartwilight/g, '');
+            
+            // Check for thunder
+            if (baseName.indexOf('thunder') !== -1) {
+                return weatherIcons['thunder'];
             }
-            // Try base name
-            const baseName = symbolCode.replace(/_day|_night|_polartwilight/g, '');
-            if (weatherEmoji[baseName]) {
-                return weatherEmoji[baseName];
+            
+            // Find matching icon
+            for (var key in weatherIcons) {
+                if (baseName.indexOf(key) !== -1) {
+                    return weatherIcons[key];
+                }
             }
-            // Default
-            return '🌡️';
+            
+            return { icon: '?', css: 'icon-cloud' };
         }
         
         function getWindArrow(degrees) {
-            const arrows = ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'];
+            var arrows = ['v', 'v', '<', '<', '^', '^', '>', '>'];
             return arrows[Math.round(degrees / 45) % 8];
         }
         
@@ -294,124 +266,128 @@
         }
         
         function formatHour(isoString) {
-            const date = new Date(isoString);
-            return date.getHours().toString().padStart(2, '0');
+            var date = new Date(isoString);
+            var h = date.getHours();
+            return (h < 10 ? '0' : '') + h;
         }
         
-        async function fetchWeather(locationKey) {
-            const loc = locations[locationKey];
-            const url = `${workerUrl}?lat=${loc.lat}&lon=${loc.lon}`;
+        function fetchWeather(locationKey, callback) {
+            var loc = locations[locationKey];
+            var url = workerUrl + '?lat=' + loc.lat + '&lon=' + loc.lon;
             
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error(`Feil for ${loc.name}:`, error);
-                return null;
-            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            callback(null, data);
+                        } catch (e) {
+                            callback(e, null);
+                        }
+                    } else {
+                        callback(new Error('HTTP ' + xhr.status), null);
+                    }
+                }
+            };
+            xhr.send();
         }
         
         function renderWeatherCard(locationKey, data) {
-            const card = document.querySelector(`[data-location="${locationKey}"]`);
-            const loc = locations[locationKey];
+            var card = document.querySelector('[data-location="' + locationKey + '"]');
+            var loc = locations[locationKey];
             
             if (!data) {
-                card.innerHTML = `
-                    <div class="current-section error-state">
-                        <div class="location-name">${loc.name}</div>
-                        <div class="error-msg">Ingen data tilgjengelig</div>
-                    </div>
-                `;
+                card.innerHTML = '<div class="current-section error-state">' +
+                    '<div class="location-name">' + loc.name + '</div>' +
+                    '<div class="error-msg">No data</div>' +
+                    '</div>';
                 return;
             }
             
             try {
-                const timeseries = data.properties.timeseries;
+                var timeseries = data.properties.timeseries;
+                var current = timeseries[0];
+                var currentInstant = current.data.instant.details;
+                var currentNext1h = current.data.next_1_hours;
                 
-                // Current weather
-                const current = timeseries[0];
-                const currentInstant = current.data.instant.details;
-                const currentNext1h = current.data.next_1_hours;
+                var currentTemp = Math.round(currentInstant.air_temperature);
+                var windSpeed = currentInstant.wind_speed.toFixed(1);
+                var windDir = currentInstant.wind_from_direction;
+                var currentSymbol = (currentNext1h && currentNext1h.summary) ? currentNext1h.summary.symbol_code : 'fair_day';
+                var currentIcon = getWeatherIcon(currentSymbol);
                 
-                const currentTemp = Math.round(currentInstant.air_temperature);
-                const windSpeed = currentInstant.wind_speed.toFixed(1);
-                const windDir = currentInstant.wind_from_direction;
-                const currentSymbol = currentNext1h?.summary?.symbol_code || 'fair_day';
+                // Forecast
+                var now = new Date();
+                var forecastHours = [2, 4, 6, 8];
+                var forecastHTML = '';
                 
-                // Forecast: +2h, +4h, +6h, +8h
-                const now = new Date();
-                const forecastHours = [2, 4, 6, 8];
-                const forecasts = [];
-                
-                for (const hoursAhead of forecastHours) {
-                    const targetTime = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
+                for (var i = 0; i < forecastHours.length; i++) {
+                    var hoursAhead = forecastHours[i];
+                    var targetTime = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
                     
-                    let closest = timeseries[0];
-                    let minDiff = Infinity;
+                    var closest = timeseries[0];
+                    var minDiff = Infinity;
                     
-                    for (const ts of timeseries) {
-                        const tsTime = new Date(ts.time);
-                        const diff = Math.abs(tsTime - targetTime);
+                    for (var j = 0; j < timeseries.length; j++) {
+                        var ts = timeseries[j];
+                        var tsTime = new Date(ts.time);
+                        var diff = Math.abs(tsTime - targetTime);
                         if (diff < minDiff) {
                             minDiff = diff;
                             closest = ts;
                         }
                     }
                     
-                    const instant = closest.data.instant.details;
-                    const next1h = closest.data.next_1_hours || closest.data.next_6_hours;
+                    var instant = closest.data.instant.details;
+                    var next1h = closest.data.next_1_hours || closest.data.next_6_hours;
+                    var fTemp = Math.round(instant.air_temperature);
+                    var fSymbol = (next1h && next1h.summary) ? next1h.summary.symbol_code : 'fair_day';
+                    var fIcon = getWeatherIcon(fSymbol);
+                    var fPrecip = (next1h && next1h.details) ? next1h.details.precipitation_amount : 0;
                     
-                    forecasts.push({
-                        time: closest.time,
-                        temp: Math.round(instant.air_temperature),
-                        symbol: next1h?.summary?.symbol_code || 'fair_day',
-                        precip: next1h?.details?.precipitation_amount || 0
-                    });
+                    forecastHTML += '<div class="forecast-item">' +
+                        '<span class="forecast-time">' + formatHour(closest.time) + '</span>' +
+                        '<span class="forecast-icon ' + fIcon.css + '">' + fIcon.icon + '</span>' +
+                        '<span class="forecast-temp ' + getTempClass(fTemp) + '">' + fTemp + 'C</span>' +
+                        '<span class="forecast-precip">' + (fPrecip > 0.1 ? fPrecip.toFixed(1) + 'mm' : '') + '</span>' +
+                        '</div>';
                 }
                 
-                const forecastHTML = forecasts.map(f => `
-                    <div class="forecast-item">
-                        <span class="forecast-time">${formatHour(f.time)}</span>
-                        <span class="forecast-icon">${getWeatherEmoji(f.symbol)}</span>
-                        <span class="forecast-temp ${getTempClass(f.temp)}">${f.temp}°</span>
-                        <span class="forecast-precip">${f.precip > 0.1 ? f.precip.toFixed(1) + 'mm' : ''}</span>
-                    </div>
-                `).join('');
-                
-                card.innerHTML = `
-                    <div class="current-section">
-                        <div class="location-name">${loc.name}</div>
-                        <div class="current-main">
-                            <span class="weather-icon">${getWeatherEmoji(currentSymbol)}</span>
-                            <span class="current-temp ${getTempClass(currentTemp)}">${currentTemp}<span class="unit">°</span></span>
-                        </div>
-                        <div class="current-detail">${getWindArrow(windDir)} ${windSpeed} m/s</div>
-                    </div>
-                    <div class="forecast-section">
-                        ${forecastHTML}
-                    </div>
-                    <span class="attribution">yr.no</span>
-                `;
+                card.innerHTML = '<div class="current-section">' +
+                    '<div class="location-name">' + loc.name + '</div>' +
+                    '<div class="current-main">' +
+                        '<span class="weather-icon ' + currentIcon.css + '">' + currentIcon.icon + '</span>' +
+                        '<span class="current-temp ' + getTempClass(currentTemp) + '">' + currentTemp + '<span class="unit">C</span></span>' +
+                    '</div>' +
+                    '<div class="current-detail">' + getWindArrow(windDir) + ' ' + windSpeed + ' m/s</div>' +
+                    '</div>' +
+                    '<div class="forecast-section">' + forecastHTML + '</div>' +
+                    '<span class="attribution">yr.no</span>';
+                    
             } catch (error) {
-                console.error('Parse error:', error);
-                card.innerHTML = `
-                    <div class="current-section error-state">
-                        <div class="location-name">${loc.name}</div>
-                        <div class="error-msg">Datafeil</div>
-                    </div>
-                `;
+                card.innerHTML = '<div class="current-section error-state">' +
+                    '<div class="location-name">' + loc.name + '</div>' +
+                    '<div class="error-msg">Error</div>' +
+                    '</div>';
             }
         }
         
-        async function initWeather() {
-            const keys = Object.keys(locations);
-            const results = await Promise.all(keys.map(k => fetchWeather(k)));
-            keys.forEach((k, i) => renderWeatherCard(k, results[i]));
+        function initWeather() {
+            var keys = ['lierbyen', 'lierstranda', 'tranby', 'sylling'];
+            
+            for (var i = 0; i < keys.length; i++) {
+                (function(key) {
+                    fetchWeather(key, function(err, data) {
+                        renderWeatherCard(key, err ? null : data);
+                    });
+                })(keys[i]);
+            }
         }
         
         initWeather();
-        setInterval(initWeather, 10 * 60 * 1000);
+        setInterval(initWeather, 600000);
     </script>
 </body>
 </html>
