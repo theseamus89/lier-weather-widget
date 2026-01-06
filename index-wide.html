@@ -141,31 +141,33 @@
         .forecast-section {
             display: flex;
             flex: 1;
-            justify-content: space-around;
+            justify-content: flex-start;
             align-items: center;
+            align-content: center;
             min-width: 0;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
+            gap: 4px 0;
         }
 
         .forecast-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 4px;
-            flex-shrink: 1;
+            width: 25%;
+            padding: 2px 0;
         }
 
         .forecast-time {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .forecast-icon {
-            width: 36px;
-            height: 36px;
-            margin-bottom: 4px;
+            width: 28px;
+            height: 28px;
+            margin-bottom: 2px;
         }
 
         .forecast-icon img {
@@ -174,15 +176,15 @@
         }
 
         .forecast-temp {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
             color: #fff;
         }
 
         .forecast-precip {
-            font-size: 10px;
+            font-size: 9px;
             color: #5dade2;
-            min-height: 14px;
+            min-height: 12px;
             font-weight: 500;
         }
 
