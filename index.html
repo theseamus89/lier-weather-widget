@@ -197,7 +197,8 @@
             sylling: { name: 'Sylling', lat: 59.8633, lon: 10.1850 }
         };
         
-        const corsProxy = 'https://corsproxy.io/?';
+        // Din egen Cloudflare Worker proxy
+        const workerUrl = 'https://blue-wind-cec8.tobiassundal.workers.dev';
         
         // Weather symbol to emoji mapping
         const weatherEmoji = {
@@ -299,11 +300,10 @@
         
         async function fetchWeather(locationKey) {
             const loc = locations[locationKey];
-            const apiUrl = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${loc.lat}&lon=${loc.lon}`;
-            const proxyUrl = corsProxy + encodeURIComponent(apiUrl);
+            const url = `${workerUrl}?lat=${loc.lat}&lon=${loc.lon}`;
             
             try {
-                const response = await fetch(proxyUrl);
+                const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return await response.json();
             } catch (error) {
